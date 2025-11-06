@@ -1,0 +1,1 @@
+# -KPO_HardwareAccounting_CourseWork
