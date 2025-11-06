@@ -1,3 +1,3 @@
-# -KPO_HardwareAccounting_CourseWork
+# KPO_HardwareAccounting_CourseWork
 
 Репозиторий для курсовой работы по дисциплине "Конструирование программного обеспечения".
