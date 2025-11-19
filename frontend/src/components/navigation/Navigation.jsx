@@ -18,7 +18,7 @@ const Navigation = ({ routes }) => {
         <Container fluid="md" className="d-flex flex-wrap align-items-center">
           <Navbar.Brand as={Link} to={indexPageLink?.path ?? '/'} className="order-0">
             <img src={Logo} alt="Logo" height="40" className="me-3" />
-            <span>
+            <span className='me-4 text-white'>
               Учет аппаратных средств
             </span>
           </Navbar.Brand>

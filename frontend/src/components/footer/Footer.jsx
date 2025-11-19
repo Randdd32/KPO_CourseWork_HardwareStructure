@@ -24,7 +24,7 @@ const Footer = () => {
               <NavLink to="/" className="text-white nav-link-custom">
                 <i className="bi bi-house me-2"></i> Главная страница
               </NavLink>
-              <NavLink to="/support" className="text-white nav-link-custom">
+              <NavLink to="/" className="text-white nav-link-custom">
                 <i className="bi bi-envelope me-2"></i> Помощь
               </NavLink>
             </Nav>

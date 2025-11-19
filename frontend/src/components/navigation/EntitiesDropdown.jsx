@@ -1,3 +1,4 @@
+import React from 'react';
 import { Nav, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { BsListUl } from 'react-icons/bs';
@@ -18,15 +19,15 @@ const navItems = [
 
 const EntitiesDropdown = () => {
   const dropdownTitle = (
-    <>
-      <BsListUl className="me-2" style={{ verticalAlign: 'middle' }} />
+    <span className="text-white">
+      <BsListUl className="me-2 align-text-bottom" />
       Сущности
-    </>
+    </span>
   );
 
   return (
     <Nav>
-      <NavDropdown title={dropdownTitle} id="entities-dropdown" align="end">
+      <NavDropdown title={dropdownTitle} id="entities-dropdown" align="end" className="nav-link">
         {
           navItems.map((item, index) => (
             <React.Fragment key={index}>
