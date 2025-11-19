@@ -16,7 +16,7 @@ const ModalConfirm = ({
       </Modal.Body>
 
       <Modal.Footer className='m-0 pt-2 pb-2 ps-3 pe-3 row justify-content-center'>
-        <Button variant='dark' className='col-5 m-0 me-2 fw-semibold'
+        <Button variant='danger' className='col-5 m-0 me-2 fw-semibold'
           onClick={() => onConfirm()}>
           Да
         </Button>

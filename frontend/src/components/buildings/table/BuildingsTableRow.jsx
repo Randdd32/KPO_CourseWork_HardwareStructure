@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button } from 'react-bootstrap';
+import { Button, ButtonGroup } from 'react-bootstrap';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const BuildingsTableRow = ({
@@ -15,13 +15,14 @@ const BuildingsTableRow = ({
           <Button
             variant="success"
             onClick={onEditInPage}
-            className="me-1"
+            className="me-2 rounded-1"
             size="sm"
           >
             <FaEdit />
           </Button>
           <Button
             variant="danger"
+            className='rounded-1'
             onClick={onDelete}
             size="sm"
           >
