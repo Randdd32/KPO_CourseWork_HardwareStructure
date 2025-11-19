@@ -22,6 +22,10 @@ main {
   text-align: justify;
 }
 
+.buttons-col {
+  width: 120px;
+}
+
 .edit-btn {
   max-height: 40px;
   max-width: 100px;
