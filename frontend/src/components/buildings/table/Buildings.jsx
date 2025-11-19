@@ -30,10 +30,10 @@ const Buildings = () => {
       </div>
       <BuildingsTable>
         {
-          buildings.map((building, index) =>
+          buildings.map((building) =>
             <BuildingsTableRow
               key={building.id}
-              index={index} building={building}
+              building={building}
               onDelete={() => showDeleteModal(building.id)}
               onEditInPage={() => showEditPage(building.id)}
             />)

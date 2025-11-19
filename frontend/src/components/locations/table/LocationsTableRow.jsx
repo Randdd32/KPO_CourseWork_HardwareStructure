@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
-const BuildingsTableRow = ({
-  building, onDelete, onEditInPage,
-}) => {
+const LocationsTableRow = ({ location, onDelete, onEditInPage }) => {
   return (
     <tr>
-      <td className="text-center">{building.id}</td>
-      <td>{building.name}</td>
-      <td>{building.address}</td>
+      <td className="text-center">{location.id}</td>
+      <td>{location.name}</td>
+      <td>{location.type}</td>
+      <td>{location.buildingName}</td>
+      <td>{location.departmentName}</td>
       <td>
         <ButtonGroup aria-label="Действия">
           <Button
@@ -34,10 +34,10 @@ const BuildingsTableRow = ({
   );
 };
 
-BuildingsTableRow.propTypes = {
-  building: PropTypes.object,
+LocationsTableRow.propTypes = {
+  location: PropTypes.object,
   onDelete: PropTypes.func,
   onEditInPage: PropTypes.func
 };
 
-export default BuildingsTableRow;
+export default LocationsTableRow;

@@ -13,7 +13,10 @@ const routes = [
   { index: true, path: '/', element: <PageMain />, title: 'Главная страница' },
 
   { path: '/admin/building/:id?', element: <PageBuilding />, title: 'Панель администратора. Здание' },
-  { path: '/admin/buildings', element: <PageBuildings />, title: 'Панель администратора. Здания' }
+  { path: '/admin/buildings', element: <PageBuildings />, title: 'Панель администратора. Здания' },
+
+  { path: '/admin/location/:id?', element: <PageLocation />, title: 'Панель администратора. Помещение' },
+  { path: '/admin/locations', element: <PageLocations />, title: 'Панель администратора. Помещения' },
 ];
 
 const router = createBrowserRouter([
