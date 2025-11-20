@@ -49,6 +49,9 @@ const routes = [
 
   { path: '/admin/manufacturer/:id?', element: <PageManufacturer />, title: 'Панель администратора. Производитель' },
   { path: '/admin/manufacturers', element: <PageManufacturers />, title: 'Панель администратора. Производители' },
+
+  { path: '/admin/position/:id?', element: <PagePosition />, title: 'Панель администратора. Должность' },
+  { path: '/admin/positions', element: <PagePositions />, title: 'Панель администратора. Должности' },
 ];
 
 const router = createBrowserRouter([
