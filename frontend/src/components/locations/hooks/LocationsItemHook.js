@@ -38,7 +38,6 @@ const useLocationItem = (id) => {
 
   useEffect(() => {
     getItem(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   return {
