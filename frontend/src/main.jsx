@@ -22,6 +22,12 @@ import PageEmployee from './pages/PageEmployee.jsx';
 import PageEmployees from './pages/PageEmployees.jsx';
 import PageManufacturer from './pages/PageManufacturer.jsx';
 import PageManufacturers from './pages/PageManufacturers.jsx';
+import PagePosition from './pages/PagePosition.jsx';
+import PagePositions from './pages/PagePositions.jsx';
+import PageStructureElementModel from './pages/PageStructureElementModel.jsx';
+import PageStructureElementModels from './pages/PageStructureElementModels.jsx';
+import PageStructureElementType from './pages/PageStructureElementType.jsx';
+import PageStructureElementTypes from './pages/PageStructureElementTypes.jsx';
 
 const routes = [
   { index: true, path: '/', element: <PageMain />, title: 'Главная страница' },
@@ -55,6 +61,9 @@ const routes = [
 
   { path: '/admin/structure-element-model/:id?', element: <PageStructureElementModel />, title: 'Панель администратора. Модель элемента структуры' },
   { path: '/admin/structure-element-models', element: <PageStructureElementModels />, title: 'Панель администратора. Модели элементов структуры' },
+
+  { path: '/admin/structure-element-type/:id?', element: <PageStructureElementType />, title: 'Панель администратора. Тип элемента структуры' },
+  { path: '/admin/structure-element-types', element: <PageStructureElementTypes />, title: 'Панель администратора. Типы элементов структуры' }
 ];
 
 const router = createBrowserRouter([
