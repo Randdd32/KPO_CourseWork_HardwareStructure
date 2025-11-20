@@ -1,45 +1,44 @@
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import ModalConfirm from '../../modal/ModalConfirm.jsx';
-import useDevicesDeleteModal from '../hooks/DevicesDeleteModalHook.js';
-import useDevices from '../hooks/DeviceHook.js';
-import DevicesTable from './DevicesTable.jsx';
-import DevicesTableRow from './DevicesTableRow.jsx';
+import useEmployeesDeleteModal from '../hooks/EmployeesDeleteModalHook.js';
+import useEmployees from '../hooks/EmployeeHook.js';
+import EmployeesTable from './EmployeesTable.jsx';
+import EmployeesTableRow from './EmployeesTableRow.jsx';
 import PaginationComponent from '../../pagination/Pagination.jsx';
 import { useEffect } from 'react';
 import { PAGE_SIZE } from '../../utils/Constants.js';
 
-const Devices = () => {
+const Employees = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const pageParam = parseInt(searchParams.get('page')) || 1;
 
   const {
-    devices,
+    employees,
     totalPages,
-    getDevices,
-    devicesRefresh,
-    handleDevicesChange
-  } = useDevices();
+    getEmployees,
+    employeesRefresh,
+    handleEmployeesChange
+  } = useEmployees();
 
   const {
     isDeleteModalShow,
     showDeleteModal,
     handleDeleteConfirm,
     handleDeleteCancel,
-  } = useDevicesDeleteModal(handleDevicesChange);
+  } = useEmployeesDeleteModal(handleEmployeesChange);
 
   useEffect(() => {
-    getDevices(pageParam, PAGE_SIZE);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageParam, devicesRefresh]);
+    getEmployees(pageParam, PAGE_SIZE);
+  }, [pageParam, employeesRefresh]);
 
   const showEditPage = (id) => {
-    navigate(`/admin/device/${id}`);
+    navigate(`/admin/employee/${id}`);
   };
 
   const handlePageChange = (page) => {
-    setSearchParams(prev => {
+    setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
       newParams.set('page', page);
       return newParams;
@@ -50,19 +49,19 @@ const Devices = () => {
     <div className="row gy-2">
       <div className="col-12 px-0">
         <div className="block d-flex justify-content-center fs-2 fw-bold admin-title mb-1">
-          Устройства
+          Сотрудники
         </div>
       </div>
-      <DevicesTable>
-        {devices.map((device) => (
-          <DevicesTableRow
-            key={device.id}
-            device={device}
-            onDelete={() => showDeleteModal(device.id)}
-            onEditInPage={() => showEditPage(device.id)}
+      <EmployeesTable>
+        {employees.map((employee) => (
+          <EmployeesTableRow
+            key={employee.id}
+            employee={employee}
+            onDelete={() => showDeleteModal(employee.id)}
+            onEditInPage={() => showEditPage(employee.id)}
           />
         ))}
-      </DevicesTable>
+      </EmployeesTable>
       <PaginationComponent
         totalPages={totalPages}
         currentPage={pageParam}
@@ -70,7 +69,9 @@ const Devices = () => {
       />
       <div className="col-12 px-0 mt-3 mb-2">
         <div className="block mb-4">
-          <Link to="/admin/device" className="btn btn-dark fw-semibold">Добавить устройство</Link>
+          <Link to="/admin/employee" className="btn btn-success fw-semibold">
+            Добавить сотрудника
+          </Link>
         </div>
       </div>
       <ModalConfirm
@@ -84,4 +85,4 @@ const Devices = () => {
   );
 };
 
-export default Devices;
+export default Employees;

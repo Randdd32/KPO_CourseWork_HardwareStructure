@@ -18,6 +18,10 @@ import PageDevice from './pages/PageDevice.jsx';
 import PageDevices from './pages/PageDevices.jsx';
 import PageDeviceType from './pages/PageDeviceType.jsx';
 import PageDeviceTypes from './pages/PageDeviceTypes.jsx';
+import PageEmployee from './pages/PageEmployee.jsx';
+import PageEmployees from './pages/PageEmployees.jsx';
+import PageManufacturer from './pages/PageManufacturer.jsx';
+import PageManufacturers from './pages/PageManufacturers.jsx';
 
 const routes = [
   { index: true, path: '/', element: <PageMain />, title: 'Главная страница' },
@@ -39,6 +43,12 @@ const routes = [
 
   { path: '/admin/device-type/:id?', element: <PageDeviceType />, title: 'Панель администратора. Тип устройства' },
   { path: '/admin/device-types', element: <PageDeviceTypes />, title: 'Панель администратора. Типы устройств' },
+
+  { path: '/admin/employee/:id?', element: <PageEmployee />, title: 'Панель администратора. Сотрудник' },
+  { path: '/admin/employees', element: <PageEmployees />, title: 'Панель администратора. Сотрудники' },
+
+  { path: '/admin/manufacturer/:id?', element: <PageManufacturer />, title: 'Панель администратора. Производитель' },
+  { path: '/admin/manufacturers', element: <PageManufacturers />, title: 'Панель администратора. Производители' },
 ];
 
 const router = createBrowserRouter([
