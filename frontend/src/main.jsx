@@ -52,6 +52,9 @@ const routes = [
 
   { path: '/admin/position/:id?', element: <PagePosition />, title: 'Панель администратора. Должность' },
   { path: '/admin/positions', element: <PagePositions />, title: 'Панель администратора. Должности' },
+
+  { path: '/admin/structure-element-model/:id?', element: <PageStructureElementModel />, title: 'Панель администратора. Модель элемента структуры' },
+  { path: '/admin/structure-element-models', element: <PageStructureElementModels />, title: 'Панель администратора. Модели элементов структуры' },
 ];
 
 const router = createBrowserRouter([
