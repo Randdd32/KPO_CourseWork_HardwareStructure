@@ -1,0 +1,15 @@
+.nav-link-custom {
+  text-decoration: none;
+  color: #fff !important;
+  transition: color 0.3s;
+}
+
+.nav-link-custom:hover {
+  color: rgb(6, 69, 173) !important;
+  text-decoration: none;
+}
+
+footer {
+    background-color: rgb(23, 154, 183);
+    color: white;
+}

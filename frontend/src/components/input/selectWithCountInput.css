@@ -1,0 +1,42 @@
+.select-option-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.count-input {
+  width: 60px;
+  margin-left: 10px;
+  padding: 2px 4px 2px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: left;
+}
+
+.multi-value-count-input {
+  width: 60px;
+  margin-left: 8px;
+  padding: 2px 4px 2px 6px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  text-align: left;
+}
+
+.multi-value-content {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 450px) {
+  .select-option-content, .multi-value-content{
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .count-input, .multi-value-count-input {
+    padding-left: 4 !important;
+    margin-left: 0 !important;
+    margin-top: 6px !important;
+  }
+}
