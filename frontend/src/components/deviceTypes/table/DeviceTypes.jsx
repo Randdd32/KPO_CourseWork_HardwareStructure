@@ -42,7 +42,7 @@ const DeviceTypes = () => {
       </DeviceTypesTable>
       <div className="col-12 px-0 mb-2">
         <div className="block mb-4">
-          <Link to="/admin/device-type" className="btn btn-dark fw-semibold">Добавить тип устройства</Link>
+          <Link to="/admin/device-type" className="btn btn-success fw-semibold">Добавить тип устройства</Link>
         </div>
       </div>
       <ModalConfirm

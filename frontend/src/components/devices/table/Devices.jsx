@@ -70,7 +70,7 @@ const Devices = () => {
       />
       <div className="col-12 px-0 mt-3 mb-2">
         <div className="block mb-4">
-          <Link to="/admin/device" className="btn btn-dark fw-semibold">Добавить устройство</Link>
+          <Link to="/admin/device" className="btn btn-success fw-semibold">Добавить устройство</Link>
         </div>
       </div>
       <ModalConfirm
