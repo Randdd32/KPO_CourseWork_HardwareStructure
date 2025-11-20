@@ -25,6 +25,7 @@ const useDepartmentsItem = (id) => {
       );
     } else {
       setItem({ ...emptyItem });
+      setInitialPositions([]);
     }
   };
 

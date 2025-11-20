@@ -1,47 +1,47 @@
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import ModalConfirm from '../../modal/ModalConfirm.jsx';
-import useLocationDeleteModal from '../hooks/LocationsDeleteModalHook.js';
-import useLocations from '../hooks/LocationHook.js';
-import LocationsTable from './LocationsTable.jsx';
-import LocationsTableRow from './LocationsTableRow.jsx';
+import useDeviceModelsDeleteModal from '../hooks/DeviceModelsDeleteModalHook.js';
+import useDeviceModels from '../hooks/DeviceModelHook.js';
+import DeviceModelsTable from './DeviceModelsTable.jsx';
+import DeviceModelsTableRow from './DeviceModelsTableRow.jsx';
 import PaginationComponent from '../../pagination/Pagination.jsx';
 import { useEffect } from 'react';
 import { PAGE_SIZE } from '../../utils/Constants.js';
 
-const Locations = () => {
+const DeviceModels = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const pageParam = parseInt(searchParams.get('page')) || 1;
 
   const {
-    locations,
+    deviceModels,
     totalPages,
-    getLocations,
-    locationsRefresh,
-    handleLocationsChange,
-  } = useLocations();
+    getDeviceModels,
+    deviceModelsRefresh,
+    handleDeviceModelsChange
+  } = useDeviceModels();
 
   const {
     isDeleteModalShow,
     showDeleteModal,
     handleDeleteConfirm,
     handleDeleteCancel,
-  } = useLocationDeleteModal(handleLocationsChange);
+  } = useDeviceModelsDeleteModal(handleDeviceModelsChange);
 
   useEffect(() => {
-    getLocations(pageParam, PAGE_SIZE);
-  }, [pageParam, locationsRefresh]);
+    getDeviceModels(pageParam, PAGE_SIZE);
+  }, [pageParam, deviceModelsRefresh]);
 
   const showEditPage = (id) => {
-    navigate(`/admin/location/${id}`);
+    navigate(`/admin/device-model/${id}`);
   };
 
   const handlePageChange = (page) => {
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set('page', page);
-      return newParams;
+    setSearchParams(prevSearchParams => {
+      const newSearchParams = new URLSearchParams(prevSearchParams);
+      newSearchParams.set('page', page);
+      return newSearchParams;
     });
   };
 
@@ -49,19 +49,21 @@ const Locations = () => {
     <div className="row gy-2">
       <div className="col-12 px-0">
         <div className="block d-flex justify-content-center fs-2 fw-bold admin-title mb-1">
-          Помещения
+          Модели устройств
         </div>
       </div>
-      <LocationsTable>
-        {locations.map((location) => (
-          <LocationsTableRow
-            key={location.id}
-            location={location}
-            onDelete={() => showDeleteModal(location.id)}
-            onEditInPage={() => showEditPage(location.id)}
-          />
-        ))}
-      </LocationsTable>
+      <DeviceModelsTable>
+        {
+          deviceModels.map((model) =>
+            <DeviceModelsTableRow
+              key={model.id}
+              deviceModel={model}
+              onDelete={() => showDeleteModal(model.id)}
+              onEditInPage={() => showEditPage(model.id)}
+            />
+          )
+        }
+      </DeviceModelsTable>
       <PaginationComponent
         totalPages={totalPages}
         currentPage={pageParam}
@@ -69,9 +71,7 @@ const Locations = () => {
       />
       <div className="col-12 px-0 mt-3 mb-2">
         <div className="block mb-4">
-          <Link to="/admin/location" className="btn btn-success fw-semibold">
-            Добавить помещение
-          </Link>
+          <Link to="/admin/device-model" className="btn btn-success fw-semibold">Добавить модель</Link>
         </div>
       </div>
       <ModalConfirm
@@ -85,4 +85,4 @@ const Locations = () => {
   );
 };
 
-export default Locations;
+export default DeviceModels;

@@ -12,6 +12,8 @@ import PageDepartment from './pages/PageDepartment.jsx';
 import PageDepartments from './pages/PageDepartments.jsx';
 import PageLocation from './pages/PageLocation.jsx';
 import PageLocations from './pages/PageLocations.jsx';
+import PageDeviceModel from './pages/PageDeviceModel.jsx';
+import PageDeviceModels from './pages/PageDeviceModels.jsx';
 
 const routes = [
   { index: true, path: '/', element: <PageMain />, title: 'Главная страница' },
@@ -24,6 +26,9 @@ const routes = [
 
   { path: '/admin/location/:id?', element: <PageLocation />, title: 'Панель администратора. Помещение' },
   { path: '/admin/locations', element: <PageLocations />, title: 'Панель администратора. Помещения' },
+
+  { path: '/admin/device-model/:id?', element: <PageDeviceModel />, title: 'Панель администратора. Модель устройства' },
+  { path: '/admin/device-models', element: <PageDeviceModels />, title: 'Панель администратора. Модели устройств' },
 ];
 
 const router = createBrowserRouter([

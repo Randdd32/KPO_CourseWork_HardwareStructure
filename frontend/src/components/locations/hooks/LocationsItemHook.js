@@ -33,6 +33,9 @@ const useLocationItem = (id) => {
       );
     } else {
       setItem({ ...emptyItem });
+      setInitialBuilding(null);
+      setInitialDepartment(null);
+      setInitialEmployees([]);
     }
   };
 

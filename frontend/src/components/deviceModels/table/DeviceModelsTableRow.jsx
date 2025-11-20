@@ -2,13 +2,15 @@ import PropTypes from 'prop-types';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
-const DepartmentsTableRow = ({
-  department, onDelete, onEditInPage,
+const DeviceModelsTableRow = ({
+  deviceModel, onDelete, onEditInPage,
 }) => {
   return (
     <tr>
-      <td className="text-center">{department.id}</td>
-      <td>{department.name}</td>
+      <td className="text-center">{deviceModel.id}</td>
+      <td>{deviceModel.name}</td>
+      <td>{deviceModel.typeName}</td>
+      <td>{deviceModel.manufacturerName}</td>
       <td>
         <ButtonGroup aria-label="Действия">
           <Button
@@ -33,10 +35,10 @@ const DepartmentsTableRow = ({
   );
 };
 
-DepartmentsTableRow.propTypes = {
-  department: PropTypes.object,
+DeviceModelsTableRow.propTypes = {
+  deviceModel: PropTypes.object,
   onDelete: PropTypes.func,
-  onEditInPage: PropTypes.func,
+  onEditInPage: PropTypes.func
 };
 
-export default DepartmentsTableRow;
+export default DeviceModelsTableRow;
