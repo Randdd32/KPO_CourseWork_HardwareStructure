@@ -5,13 +5,12 @@ import com.hardware.hardware_structure.model.entity.DepartmentEntity;
 import com.hardware.hardware_structure.model.entity.PositionEntity;
 import com.hardware.hardware_structure.service.entity.DepartmentService;
 import com.hardware.hardware_structure.service.entity.PositionService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 class DepartmentServiceTests extends AbstractIntegrationTest {
@@ -41,15 +40,10 @@ class DepartmentServiceTests extends AbstractIntegrationTest {
         departmentService.create(new DepartmentEntity("Отдел логистики"));
     }
 
-    @AfterEach
-    void removeData() {
-        departmentService.getAll(null).forEach(item -> departmentService.delete(item.getId()));
-        positionService.getAll(null).forEach(item -> positionService.delete(item.getId()));
-    }
-
-    @Transactional
     @Test
     void getTest() {
+        Assertions.assertEquals(2, departmentService.getAll(null).size());
+
         DepartmentEntity retrieved = departmentService.get(salesDepartment.getId());
 
         Assertions.assertEquals("Отдел продаж", retrieved.getName());
@@ -58,7 +52,6 @@ class DepartmentServiceTests extends AbstractIntegrationTest {
         Assertions.assertThrows(NotFoundException.class, () -> departmentService.get(0L));
     }
 
-    @Transactional
     @Test
     void createWithPositionsTest() {
         DepartmentEntity newDepartment = new DepartmentEntity("Отдел HR");
@@ -78,20 +71,22 @@ class DepartmentServiceTests extends AbstractIntegrationTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> departmentService.create(duplicateDepartment));
     }
 
-    @Transactional
     @Test
-    void updateWithPositionsTest() {
+    void updateTest() {
         final String newName = "Отдел продаж и маркетинга";
 
+        PositionEntity marketingPosition = positionService.create(new PositionEntity("Маркетолог", ""));
+
         DepartmentEntity updateEntity = new DepartmentEntity(newName);
-        updateEntity.setPositions(Set.of(directorPosition, specialistPosition));
+        updateEntity.setPositions(Set.of(directorPosition, specialistPosition, marketingPosition));
 
         final DepartmentEntity updatedDepartment = departmentService.update(salesDepartment.getId(), updateEntity);
 
         Assertions.assertEquals(newName, updatedDepartment.getName());
-        Assertions.assertEquals(2, updatedDepartment.getPositions().size());
+        Assertions.assertEquals(3, updatedDepartment.getPositions().size());
         Assertions.assertTrue(updatedDepartment.getPositions().contains(directorPosition));
         Assertions.assertTrue(updatedDepartment.getPositions().contains(specialistPosition));
+        Assertions.assertTrue(updatedDepartment.getPositions().contains(marketingPosition));
         Assertions.assertFalse(updatedDepartment.getPositions().contains(managerPosition));
     }
 
@@ -100,5 +95,17 @@ class DepartmentServiceTests extends AbstractIntegrationTest {
         departmentService.delete(salesDepartment.getId());
         Assertions.assertEquals(1, departmentService.getAll(null).size());
         Assertions.assertThrows(NotFoundException.class, () -> departmentService.get(salesDepartment.getId()));
+    }
+
+    @Test
+    void getAllWithSearchTest() {
+        List<DepartmentEntity> results = departmentService.getAll("Отдел продаж");
+        Assertions.assertEquals(1, results.size());
+
+        results = departmentService.getAll("отдел");
+        Assertions.assertEquals(2, results.size());
+
+        results = departmentService.getAll(null);
+        Assertions.assertEquals(2, results.size());
     }
 }

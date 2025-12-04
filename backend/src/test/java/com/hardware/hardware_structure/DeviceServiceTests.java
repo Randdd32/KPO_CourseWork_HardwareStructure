@@ -21,13 +21,11 @@ import com.hardware.hardware_structure.service.entity.EmployeeService;
 import com.hardware.hardware_structure.service.entity.LocationService;
 import com.hardware.hardware_structure.service.entity.ManufacturerService;
 import com.hardware.hardware_structure.service.entity.PositionService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -93,27 +91,14 @@ class DeviceServiceTests extends AbstractIntegrationTest {
         deviceService.create(new DeviceEntity("SN00003", date3, expiryDate3, 100000.00, true, "Новый ноутбук", model, location, employee));
     }
 
-    @AfterEach
-    void removeData() {
-        deviceService.getAll().forEach(item -> deviceService.delete(item.getId()));
-        employeeService.getAll(null).forEach(item -> employeeService.delete(item.getId()));
-        locationService.getAll(null).forEach(item -> locationService.delete(item.getId()));
-        buildingService.getAll(null).forEach(item -> buildingService.delete(item.getId()));
-        deviceModelService.getAll(null).forEach(item -> deviceModelService.delete(item.getId()));
-        deviceTypeService.getAll(null).forEach(item -> deviceTypeService.delete(item.getId()));
-        manufacturerService.getAll(null).forEach(item -> manufacturerService.delete(item.getId()));
-        departmentService.getAll(null).forEach(item -> departmentService.delete(item.getId()));
-        positionService.getAll(null).forEach(item -> positionService.delete(item.getId()));
-    }
-
     @Test
     void getTest() {
         Assertions.assertEquals(3, deviceService.getAll().size());
         Assertions.assertEquals("SN00001", deviceService.get(device1.getId()).getSerialNumber());
+
         Assertions.assertThrows(NotFoundException.class, () -> deviceService.get(0L));
     }
 
-    @Transactional
     @Test
     void createTest() {
         Date newDate = createDate(2024, 5, 1);
@@ -149,21 +134,43 @@ class DeviceServiceTests extends AbstractIntegrationTest {
                 deviceService.create(new DeviceEntity("SN_MODEL", date, expiryDate, 10.00, true, null, null, location, employee)));
     }
 
-    @Transactional
     @Test
     void updateTest() {
-        final String newSerialNumber = "UPDATED_SN";
-        final double newPrice = 99999.99;
+        DeviceTypeEntity newType = deviceTypeService.create(new DeviceTypeEntity("Планшет"));
+        ManufacturerEntity newManufacturer = manufacturerService.create(new ManufacturerEntity("Apple"));
+        DeviceModelEntity newModel = deviceModelService.create(new DeviceModelEntity("iPad Pro", "Новая модель", newType, newManufacturer), List.of());
 
-        DeviceEntity updateEntity = new DeviceEntity(newSerialNumber, device1.getPurchaseDate(), device1.getWarrantyExpiryDate(),
-                newPrice, false, "Обновлено", model, null, null);
+        BuildingEntity newBuilding = buildingService.create(new BuildingEntity("Корпус Б", "Новый адрес"));
+        DepartmentEntity newDep = departmentService.create(new DepartmentEntity("Маркетинг"));
+        LocationEntity newLocation = locationService.create(new LocationEntity("Кабинет 202", LocationType.OFFICE, newBuilding, newDep));
+
+        PositionEntity newPos = positionService.create(new PositionEntity("Маркетолог", null));
+        EmployeeEntity newEmployee = employeeService.create(new EmployeeEntity("Сидоров", "Петр", "Викторович", newDep, newPos));
+
+        final String newSerialNumber = "UPDATED_SN_12345";
+        final Date newPurchaseDate = createDate(2025, 1, 1);
+        final Date newExpiryDate = createDate(2029, 1, 1);
+        final double newPrice = 120000.50;
+        final boolean newIsWorking = false;
+        final String newFurtherInformation = "Обновленное устройство в отделе маркетинга";
+
+        DeviceEntity updateEntity = new DeviceEntity(
+                newSerialNumber, newPurchaseDate, newExpiryDate,
+                newPrice, newIsWorking, newFurtherInformation,
+                newModel, newLocation, newEmployee
+        );
 
         final DeviceEntity updatedDevice = deviceService.update(device1.getId(), updateEntity);
 
         Assertions.assertEquals(newSerialNumber, updatedDevice.getSerialNumber());
+        Assertions.assertEquals(newPurchaseDate, updatedDevice.getPurchaseDate());
+        Assertions.assertEquals(newExpiryDate, updatedDevice.getWarrantyExpiryDate());
         Assertions.assertEquals(newPrice, updatedDevice.getPrice());
-        Assertions.assertFalse(updatedDevice.isWorking());
-        Assertions.assertNull(updatedDevice.getEmployee());
+        Assertions.assertEquals(newIsWorking, updatedDevice.isWorking());
+        Assertions.assertEquals(newFurtherInformation, updatedDevice.getFurtherInformation());
+        Assertions.assertEquals(newModel.getId(), updatedDevice.getModel().getId());
+        Assertions.assertEquals(newLocation.getId(), updatedDevice.getLocation().getId());
+        Assertions.assertEquals(newEmployee.getId(), updatedDevice.getEmployee().getId());
     }
 
     @Test
@@ -181,8 +188,8 @@ class DeviceServiceTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void getAllByFiltersTest_IsWorkingAndSorting() {
-        // Проверка фильтрации по isWorking=false (должен быть только SN00002)
+    void getAllByFiltersTest_WithPaginationAndSorting() {
+        // 1. Фильтрация по isWorking=false (должен быть только SN00002)
         Page<DeviceEntity> page = deviceService.getAllByFilters(
                 null, null, null, null, null, null,
                 false, // isWorking
@@ -194,19 +201,33 @@ class DeviceServiceTests extends AbstractIntegrationTest {
         Assertions.assertEquals(1, page.getTotalElements());
         Assertions.assertEquals("SN00002", page.getContent().get(0).getSerialNumber());
 
-        // Проверка фильтрации по isWorking=true и сортировки по дате покупки (PURCHASE_DATE_ASC)
+        // 2. Пагинация + Сортировка (isWorking=true, PURCHASE_DATE_ASC). Всего 2 элемента.
         page = deviceService.getAllByFilters(
                 null, null, null, null, null, null,
                 true, // isWorking
                 null, null, null, null, null, null, null,
                 DeviceSortType.PURCHASE_DATE_ASC,
-                0, 10
+                0, 1
         );
 
         Assertions.assertEquals(2, page.getTotalElements());
-        // SN00001 (2023-10-15) должен быть первым, SN00003 (2024-01-01) вторым
+        Assertions.assertEquals(1, page.getContent().size());
+        // SN00001 (2023-10-15) должен быть первым на странице 0
         Assertions.assertEquals("SN00001", page.getContent().get(0).getSerialNumber());
-        Assertions.assertEquals("SN00003", page.getContent().get(1).getSerialNumber());
+
+        // 3. Пагинация + Сортировка (Страница 1, размер 1)
+        page = deviceService.getAllByFilters(
+                null, null, null, null, null, null,
+                true, // isWorking
+                null, null, null, null, null, null, null,
+                DeviceSortType.PURCHASE_DATE_ASC,
+                1, 1
+        );
+
+        Assertions.assertEquals(2, page.getTotalElements());
+        Assertions.assertEquals(1, page.getContent().size());
+        // SN00003 (2024-01-01) должен быть вторым на странице 1
+        Assertions.assertEquals("SN00003", page.getContent().get(0).getSerialNumber());
     }
 
     @Test
