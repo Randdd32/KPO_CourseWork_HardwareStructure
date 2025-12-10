@@ -111,6 +111,18 @@
 		</dependency>
 
         <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>6.20.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>local.jasperFont</groupId>
             <artifactId>local.jasperFont</artifactId>
             <version>1.0</version>
