@@ -3,6 +3,7 @@ package com.hardware.hardware_structure.web;
 import com.hardware.hardware_structure.core.error.ErrorDetails;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -31,6 +32,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorDetails> handleNotFoundException(NotFoundException ex, WebRequest request) {
         return buildResponse("RESOURCE_NOT_FOUND", ex, request, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(JRException.class)
+    public ResponseEntity<ErrorDetails> handleJRException(JRException ex, WebRequest request) {
+        return buildResponse("REPORT_GENERATION_FAILED", ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
