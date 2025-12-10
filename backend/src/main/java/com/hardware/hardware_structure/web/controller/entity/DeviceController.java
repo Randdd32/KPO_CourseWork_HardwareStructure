@@ -1,4 +1,4 @@
-package com.hardware.hardware_structure.web.controller;
+package com.hardware.hardware_structure.web.controller.entity;
 
 import com.hardware.hardware_structure.core.configuration.Constants;
 import com.hardware.hardware_structure.core.utility.Formatter;
