@@ -9,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EmployeeRepository extends CrudRepository<EmployeeEntity, Long>, PagingAndSortingRepository<EmployeeEntity, Long> {
     @Query("SELECT e FROM EmployeeEntity e WHERE " +
@@ -20,4 +21,29 @@ public interface EmployeeRepository extends CrudRepository<EmployeeEntity, Long>
             "LOWER(CONCAT(e.lastName, ' ', e.firstName, ' ', COALESCE(e.patronymic, ''))) LIKE LOWER(CONCAT('%', :fullNamePart, '%'))" +
             "ORDER BY e.id ASC")
     Page<EmployeeEntity> findByFullNameContainingIgnoreCase(@Param("fullNamePart") String fullNamePart, Pageable pageable);
+
+    @Query("""
+    SELECT e FROM EmployeeEntity e
+    WHERE (:fullNamePart IS NULL OR LOWER(CONCAT(e.lastName, ' ', e.firstName, ' ', COALESCE(e.patronymic, ''))) LIKE %:fullNamePart%)
+    AND (
+        :withoutAccount IS NULL
+        OR (
+            :withoutAccount = true AND NOT EXISTS (
+                SELECT u FROM UserEntity u WHERE u.employee.id = e.id
+            )
+        )
+        OR (
+            :withoutAccount = false AND EXISTS (
+                SELECT u FROM UserEntity u WHERE u.employee.id = e.id
+            )
+        )
+    )
+    ORDER BY e.id ASC
+    """)
+    Page<EmployeeEntity> findByFullNameAndWithoutAccount(@Param("fullNamePart") String fullNamePart,
+                                                         @Param("withoutAccount") Boolean withoutAccount,
+                                                         Pageable pageable);
+
+    @Query("SELECT u.employee FROM UserEntity u WHERE u.id = :userId")
+    Optional<EmployeeEntity> findByUserId(@Param("userId") Long userId);
 }
