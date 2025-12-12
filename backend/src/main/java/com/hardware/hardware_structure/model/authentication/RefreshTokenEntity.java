@@ -1,4 +1,4 @@
-package com.hardware.hardware_structure.model.token;
+package com.hardware.hardware_structure.model.authentication;
 
 import com.hardware.hardware_structure.model.entity.BaseEntity;
 import com.hardware.hardware_structure.model.entity.UserEntity;

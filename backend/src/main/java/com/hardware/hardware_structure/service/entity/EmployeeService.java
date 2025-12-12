@@ -4,6 +4,7 @@ import com.hardware.hardware_structure.core.configuration.Constants;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.EmployeeEntity;
 import com.hardware.hardware_structure.repository.EmployeeRepository;
+import com.hardware.hardware_structure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import java.util.stream.StreamSupport;
 @RequiredArgsConstructor
 public class EmployeeService extends AbstractEntityService<EmployeeEntity>  {
     private final EmployeeRepository repository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public List<EmployeeEntity> getAll(String fullName) {
@@ -29,12 +31,13 @@ public class EmployeeService extends AbstractEntityService<EmployeeEntity>  {
     }
 
     @Transactional(readOnly = true)
-    public Page<EmployeeEntity> getAll(String fullName, int page, int size) {
+    public Page<EmployeeEntity> getAll(String fullName, Boolean withoutAccount, int page, int size) {
         final Pageable pageRequest = PageRequest.of(page, size, Sort.by("id"));
-        if (fullName == null || fullName.isBlank()) {
-            return repository.findAll(pageRequest);
-        }
-        return repository.findByFullNameContainingIgnoreCase(fullName, pageRequest);
+        return repository.findByFullNameAndWithoutAccount(
+                fullName == null || fullName.isBlank() ? null : fullName.toLowerCase(),
+                withoutAccount,
+                pageRequest
+        );
     }
 
     @Transactional(readOnly = true)
@@ -72,6 +75,7 @@ public class EmployeeService extends AbstractEntityService<EmployeeEntity>  {
     @Transactional
     public EmployeeEntity delete(long id) {
         final EmployeeEntity existsEntity = get(id);
+        userRepository.findByEmployeeId(id).ifPresent(userRepository::delete);
         repository.delete(existsEntity);
         return existsEntity;
     }

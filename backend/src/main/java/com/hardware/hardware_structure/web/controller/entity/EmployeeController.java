@@ -34,9 +34,10 @@ public class EmployeeController {
     @GetMapping(EMPLOYEE_URL)
     public PageDto<EmployeeDto> getAll(
             @RequestParam(name = "fullName", defaultValue = "") String fullName,
+            @RequestParam(name = "withoutAccount", required = false) Boolean withoutAccount,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = Constants.DEFAULT_PAGE_SIZE) int size) {
-        return PageDtoMapper.toDto(employeeService.getAll(fullName, page, size), employeeMapper::toDto);
+        return PageDtoMapper.toDto(employeeService.getAll(fullName, withoutAccount, page, size), employeeMapper::toDto);
     }
 
     @GetMapping(EMPLOYEE_URL + "/ids")

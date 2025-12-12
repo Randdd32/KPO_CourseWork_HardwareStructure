@@ -43,7 +43,4 @@ public interface EmployeeRepository extends CrudRepository<EmployeeEntity, Long>
     Page<EmployeeEntity> findByFullNameAndWithoutAccount(@Param("fullNamePart") String fullNamePart,
                                                          @Param("withoutAccount") Boolean withoutAccount,
                                                          Pageable pageable);
-
-    @Query("SELECT u.employee FROM UserEntity u WHERE u.id = :userId")
-    Optional<EmployeeEntity> findByUserId(@Param("userId") Long userId);
 }

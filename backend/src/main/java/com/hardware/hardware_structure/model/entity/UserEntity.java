@@ -1,7 +1,7 @@
 package com.hardware.hardware_structure.model.entity;
 
 import com.hardware.hardware_structure.model.enums.UserRole;
-import com.hardware.hardware_structure.model.token.RefreshTokenEntity;
+import com.hardware.hardware_structure.model.authentication.RefreshTokenEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
