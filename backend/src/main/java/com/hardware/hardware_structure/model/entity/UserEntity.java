@@ -45,7 +45,7 @@ public class UserEntity extends BaseEntity {
     private UserRole role;
 
     @OneToOne
-    @JoinColumn(name = "fk_id_employee")
+    @JoinColumn(name = "fk_id_employee", nullable = false)
     private EmployeeEntity employee;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
