@@ -1,5 +1,6 @@
-package com.hardware.hardware_structure;
+package com.hardware.hardware_structure.service.entity;
 
+import com.hardware.hardware_structure.service.AbstractIntegrationTest;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.BuildingEntity;
 import com.hardware.hardware_structure.model.entity.DepartmentEntity;
@@ -12,15 +13,6 @@ import com.hardware.hardware_structure.model.entity.ManufacturerEntity;
 import com.hardware.hardware_structure.model.entity.PositionEntity;
 import com.hardware.hardware_structure.model.enums.DeviceSortType;
 import com.hardware.hardware_structure.model.enums.LocationType;
-import com.hardware.hardware_structure.service.entity.BuildingService;
-import com.hardware.hardware_structure.service.entity.DepartmentService;
-import com.hardware.hardware_structure.service.entity.DeviceModelService;
-import com.hardware.hardware_structure.service.entity.DeviceService;
-import com.hardware.hardware_structure.service.entity.DeviceTypeService;
-import com.hardware.hardware_structure.service.entity.EmployeeService;
-import com.hardware.hardware_structure.service.entity.LocationService;
-import com.hardware.hardware_structure.service.entity.ManufacturerService;
-import com.hardware.hardware_structure.service.entity.PositionService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -100,6 +92,73 @@ class DeviceServiceTests extends AbstractIntegrationTest {
     }
 
     @Test
+    void getByIdsTest() {
+        List<DeviceEntity> devices = deviceService.getByIds(List.of(device1.getId()));
+        Assertions.assertEquals(1, devices.size());
+        Assertions.assertEquals("SN00001", devices.get(0).getSerialNumber());
+
+        Assertions.assertTrue(deviceService.getByIds(null).isEmpty());
+        Assertions.assertTrue(deviceService.getByIds(List.of()).isEmpty());
+    }
+
+    @Test
+    void getBetweenPurchaseDatesTest() {
+        Date startDate = createDate(2023, 1, 1);
+        Date endDate = createDate(2025, 1, 1);
+
+        List<DeviceEntity> results = deviceService.getBetweenPurchaseDates(startDate, endDate);
+        Assertions.assertEquals(2, results.size());
+
+        // Проверка сортировки: OrderByPurchaseDateDesc -> SN00003 должен быть первым
+        Assertions.assertEquals("SN00003", results.get(0).getSerialNumber());
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> deviceService.getBetweenPurchaseDates(endDate, startDate));
+    }
+
+    @Test
+    void getAllByFiltersTest_WithPaginationAndSorting() {
+        // 1. Фильтрация по isWorking=false (должен быть только SN00002)
+        Page<DeviceEntity> page = deviceService.getAllByFilters(
+                null, null, null, null, null, null,
+                false, // isWorking
+                null, null, null, null, null, null, null,
+                DeviceSortType.PRICE_ASC, // Сортировка по цене
+                0, 10
+        );
+
+        Assertions.assertEquals(1, page.getTotalElements());
+        Assertions.assertEquals("SN00002", page.getContent().get(0).getSerialNumber());
+
+        // 2. Пагинация + Сортировка (isWorking=true, PURCHASE_DATE_ASC). Всего 2 элемента.
+        page = deviceService.getAllByFilters(
+                null, null, null, null, null, null,
+                true, // isWorking
+                null, null, null, null, null, null, null,
+                DeviceSortType.PURCHASE_DATE_ASC,
+                0, 1
+        );
+
+        Assertions.assertEquals(2, page.getTotalElements());
+        Assertions.assertEquals(1, page.getContent().size());
+        // SN00001 (2023-10-15) должен быть первым на странице 0
+        Assertions.assertEquals("SN00001", page.getContent().get(0).getSerialNumber());
+
+        // 3. Пагинация + Сортировка (Страница 1, размер 1)
+        page = deviceService.getAllByFilters(
+                null, null, null, null, null, null,
+                true, // isWorking
+                null, null, null, null, null, null, null,
+                DeviceSortType.PURCHASE_DATE_ASC,
+                1, 1
+        );
+
+        Assertions.assertEquals(2, page.getTotalElements());
+        Assertions.assertEquals(1, page.getContent().size());
+        // SN00003 (2024-01-01) должен быть вторым на странице 1
+        Assertions.assertEquals("SN00003", page.getContent().get(0).getSerialNumber());
+    }
+
+    @Test
     void createTest() {
         Date newDate = createDate(2024, 5, 1);
         Date newExpiryDate = createDate(2028, 5, 1);
@@ -171,63 +230,6 @@ class DeviceServiceTests extends AbstractIntegrationTest {
         Assertions.assertEquals(newModel.getId(), updatedDevice.getModel().getId());
         Assertions.assertEquals(newLocation.getId(), updatedDevice.getLocation().getId());
         Assertions.assertEquals(newEmployee.getId(), updatedDevice.getEmployee().getId());
-    }
-
-    @Test
-    void getBetweenPurchaseDatesTest() {
-        Date startDate = createDate(2023, 1, 1);
-        Date endDate = createDate(2025, 1, 1);
-
-        List<DeviceEntity> results = deviceService.getBetweenPurchaseDates(startDate, endDate);
-        Assertions.assertEquals(2, results.size());
-
-        // Проверка сортировки: OrderByPurchaseDateDesc -> SN00003 должен быть первым
-        Assertions.assertEquals("SN00003", results.get(0).getSerialNumber());
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> deviceService.getBetweenPurchaseDates(endDate, startDate));
-    }
-
-    @Test
-    void getAllByFiltersTest_WithPaginationAndSorting() {
-        // 1. Фильтрация по isWorking=false (должен быть только SN00002)
-        Page<DeviceEntity> page = deviceService.getAllByFilters(
-                null, null, null, null, null, null,
-                false, // isWorking
-                null, null, null, null, null, null, null,
-                DeviceSortType.PRICE_ASC, // Сортировка по цене
-                0, 10
-        );
-
-        Assertions.assertEquals(1, page.getTotalElements());
-        Assertions.assertEquals("SN00002", page.getContent().get(0).getSerialNumber());
-
-        // 2. Пагинация + Сортировка (isWorking=true, PURCHASE_DATE_ASC). Всего 2 элемента.
-        page = deviceService.getAllByFilters(
-                null, null, null, null, null, null,
-                true, // isWorking
-                null, null, null, null, null, null, null,
-                DeviceSortType.PURCHASE_DATE_ASC,
-                0, 1
-        );
-
-        Assertions.assertEquals(2, page.getTotalElements());
-        Assertions.assertEquals(1, page.getContent().size());
-        // SN00001 (2023-10-15) должен быть первым на странице 0
-        Assertions.assertEquals("SN00001", page.getContent().get(0).getSerialNumber());
-
-        // 3. Пагинация + Сортировка (Страница 1, размер 1)
-        page = deviceService.getAllByFilters(
-                null, null, null, null, null, null,
-                true, // isWorking
-                null, null, null, null, null, null, null,
-                DeviceSortType.PURCHASE_DATE_ASC,
-                1, 1
-        );
-
-        Assertions.assertEquals(2, page.getTotalElements());
-        Assertions.assertEquals(1, page.getContent().size());
-        // SN00003 (2024-01-01) должен быть вторым на странице 1
-        Assertions.assertEquals("SN00003", page.getContent().get(0).getSerialNumber());
     }
 
     @Test

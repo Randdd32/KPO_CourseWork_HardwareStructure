@@ -1,5 +1,6 @@
-package com.hardware.hardware_structure;
+package com.hardware.hardware_structure.service.entity;
 
+import com.hardware.hardware_structure.service.AbstractIntegrationTest;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.DeviceModelEntity;
 import com.hardware.hardware_structure.model.entity.DeviceModelStructureElementEntity;
@@ -7,11 +8,6 @@ import com.hardware.hardware_structure.model.entity.DeviceTypeEntity;
 import com.hardware.hardware_structure.model.entity.ManufacturerEntity;
 import com.hardware.hardware_structure.model.entity.StructureElementModelEntity;
 import com.hardware.hardware_structure.model.entity.StructureElementTypeEntity;
-import com.hardware.hardware_structure.service.entity.DeviceModelService;
-import com.hardware.hardware_structure.service.entity.DeviceTypeService;
-import com.hardware.hardware_structure.service.entity.ManufacturerService;
-import com.hardware.hardware_structure.service.entity.StructureElementModelService;
-import com.hardware.hardware_structure.service.entity.StructureElementTypeService;
 import com.hardware.hardware_structure.web.dto.entity.DeviceModelStructureElementIdDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,6 +65,38 @@ class DeviceModelServiceTests extends AbstractIntegrationTest {
         Assertions.assertEquals("E243", deviceModelService.get(model1.getId()).getName());
 
         Assertions.assertThrows(NotFoundException.class, () -> deviceModelService.get(0L));
+    }
+
+    @Test
+    void getAllWithSearchAndPaginationTest() {
+        DeviceTypeEntity printerType = deviceTypeService.create(new DeviceTypeEntity("Принтер"));
+        ManufacturerEntity canonManufacturer = manufacturerService.create(new ManufacturerEntity("Canon"));
+        deviceModelService.create(new DeviceModelEntity("LaserJet 1", "Цветной принтер", printerType, canonManufacturer), List.of());
+        deviceModelService.create(new DeviceModelEntity("DeskJet 2", "Струйный принтер", printerType, canonManufacturer), List.of());
+        deviceModelService.create(new DeviceModelEntity("DeskJet 3", "Струйный принтер", printerType, canonManufacturer), List.of());
+
+        // 1. Поиск и пагинация (Страница 0, размер 2, поиск "Jet")
+        Page<DeviceModelEntity> page = deviceModelService.getAll("Jet", 0, 2);
+        Assertions.assertEquals(3, page.getTotalElements());
+        Assertions.assertEquals(2, page.getContent().size());
+        Assertions.assertEquals("LaserJet 1", page.getContent().get(0).getName());
+
+        // 2. Страница 1, размер 2, поиск "Jet" (Последний принтер)
+        page = deviceModelService.getAll("Jet", 1, 2);
+        Assertions.assertEquals(3, page.getTotalElements());
+        Assertions.assertEquals(1, page.getContent().size());
+        Assertions.assertEquals("DeskJet 3", page.getContent().get(0).getName());
+
+        // 3. Только пагинация (Страница 0, размер 3, всего 5 моделей)
+        page = deviceModelService.getAll(null, 0, 3);
+        Assertions.assertEquals(5, page.getTotalElements());
+        Assertions.assertEquals(3, page.getContent().size());
+        Assertions.assertEquals("E243", page.getContent().get(0).getName());
+
+        // 4. Пагинация (Страница 1, размер 3)
+        page = deviceModelService.getAll(null, 1, 3);
+        Assertions.assertEquals(5, page.getTotalElements());
+        Assertions.assertEquals(2, page.getContent().size());
     }
 
     @Test
@@ -212,38 +240,6 @@ class DeviceModelServiceTests extends AbstractIntegrationTest {
         DeviceModelEntity emptyModel = deviceModelService.create(
                 new DeviceModelEntity("EmptyModel", "", type, manufacturer), List.of());
         Assertions.assertEquals(0, emptyModel.getWorkEfficiency());
-    }
-
-    @Test
-    void getAllWithSearchAndPaginationTest() {
-        DeviceTypeEntity printerType = deviceTypeService.create(new DeviceTypeEntity("Принтер"));
-        ManufacturerEntity canonManufacturer = manufacturerService.create(new ManufacturerEntity("Canon"));
-        deviceModelService.create(new DeviceModelEntity("LaserJet 1", "Цветной принтер", printerType, canonManufacturer), List.of());
-        deviceModelService.create(new DeviceModelEntity("DeskJet 2", "Струйный принтер", printerType, canonManufacturer), List.of());
-        deviceModelService.create(new DeviceModelEntity("DeskJet 3", "Струйный принтер", printerType, canonManufacturer), List.of());
-
-        // 1. Поиск и пагинация (Страница 0, размер 2, поиск "Jet")
-        Page<DeviceModelEntity> page = deviceModelService.getAll("Jet", 0, 2);
-        Assertions.assertEquals(3, page.getTotalElements());
-        Assertions.assertEquals(2, page.getContent().size());
-        Assertions.assertEquals("LaserJet 1", page.getContent().get(0).getName());
-
-        // 2. Страница 1, размер 2, поиск "Jet" (Последний принтер)
-        page = deviceModelService.getAll("Jet", 1, 2);
-        Assertions.assertEquals(3, page.getTotalElements());
-        Assertions.assertEquals(1, page.getContent().size());
-        Assertions.assertEquals("DeskJet 3", page.getContent().get(0).getName());
-
-        // 3. Только пагинация (Страница 0, размер 3, всего 5 моделей)
-        page = deviceModelService.getAll(null, 0, 3);
-        Assertions.assertEquals(5, page.getTotalElements());
-        Assertions.assertEquals(3, page.getContent().size());
-        Assertions.assertEquals("E243", page.getContent().get(0).getName());
-
-        // 4. Пагинация (Страница 1, размер 3)
-        page = deviceModelService.getAll(null, 1, 3);
-        Assertions.assertEquals(5, page.getTotalElements());
-        Assertions.assertEquals(2, page.getContent().size());
     }
 
     private DeviceModelStructureElementIdDto createDto(Long structureElementId, int count) {

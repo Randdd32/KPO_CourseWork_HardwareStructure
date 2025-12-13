@@ -1,8 +1,8 @@
-package com.hardware.hardware_structure;
+package com.hardware.hardware_structure.service.entity;
 
+import com.hardware.hardware_structure.service.AbstractIntegrationTest;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.BuildingEntity;
-import com.hardware.hardware_structure.service.entity.BuildingService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +30,28 @@ class BuildingServiceTests extends AbstractIntegrationTest {
         Assertions.assertEquals("Главное здание", buildingService.get(mainBuilding.getId()).getName());
 
         Assertions.assertThrows(NotFoundException.class, () -> buildingService.get(0L));
+    }
+
+    @Test
+    void getAllWithSearchTest() {
+        List<BuildingEntity> results = buildingService.getAll("Корпус B");
+        Assertions.assertEquals(1, results.size());
+
+        results = buildingService.getAll("корпус");
+        Assertions.assertEquals(2, results.size());
+
+        results = buildingService.getAll(null);
+        Assertions.assertEquals(3, results.size());
+    }
+
+    @Test
+    void getByIdsTest() {
+        List<BuildingEntity> buildings = buildingService.getByIds(List.of(mainBuilding.getId()));
+        Assertions.assertEquals(1, buildings.size());
+        Assertions.assertEquals("Главное здание", buildings.get(0).getName());
+
+        Assertions.assertTrue(buildingService.getByIds(null).isEmpty());
+        Assertions.assertTrue(buildingService.getByIds(List.of()).isEmpty());
     }
 
     @Test
@@ -77,17 +99,5 @@ class BuildingServiceTests extends AbstractIntegrationTest {
         buildingService.delete(mainBuilding.getId());
         Assertions.assertEquals(2, buildingService.getAll(null).size());
         Assertions.assertThrows(NotFoundException.class, () -> buildingService.get(mainBuilding.getId()));
-    }
-
-    @Test
-    void getAllWithSearchTest() {
-        List<BuildingEntity> results = buildingService.getAll("Корпус B");
-        Assertions.assertEquals(1, results.size());
-
-        results = buildingService.getAll("корпус");
-        Assertions.assertEquals(2, results.size());
-
-        results = buildingService.getAll(null);
-        Assertions.assertEquals(3, results.size());
     }
 }

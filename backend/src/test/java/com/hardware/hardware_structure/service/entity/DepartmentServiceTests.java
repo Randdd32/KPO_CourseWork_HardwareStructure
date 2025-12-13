@@ -1,10 +1,9 @@
-package com.hardware.hardware_structure;
+package com.hardware.hardware_structure.service.entity;
 
+import com.hardware.hardware_structure.service.AbstractIntegrationTest;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.DepartmentEntity;
 import com.hardware.hardware_structure.model.entity.PositionEntity;
-import com.hardware.hardware_structure.service.entity.DepartmentService;
-import com.hardware.hardware_structure.service.entity.PositionService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,6 +52,28 @@ class DepartmentServiceTests extends AbstractIntegrationTest {
     }
 
     @Test
+    void getAllWithSearchTest() {
+        List<DepartmentEntity> results = departmentService.getAll("Отдел продаж");
+        Assertions.assertEquals(1, results.size());
+
+        results = departmentService.getAll("отдел");
+        Assertions.assertEquals(2, results.size());
+
+        results = departmentService.getAll(null);
+        Assertions.assertEquals(2, results.size());
+    }
+
+    @Test
+    void getByIdsTest() {
+        List<DepartmentEntity> departments = departmentService.getByIds(List.of(salesDepartment.getId()));
+        Assertions.assertEquals(1, departments.size());
+        Assertions.assertEquals("Отдел продаж", departments.get(0).getName());
+
+        Assertions.assertTrue(departmentService.getByIds(null).isEmpty());
+        Assertions.assertTrue(departmentService.getByIds(List.of()).isEmpty());
+    }
+
+    @Test
     void createWithPositionsTest() {
         DepartmentEntity newDepartment = new DepartmentEntity("Отдел HR");
         newDepartment.addPosition(managerPosition);
@@ -95,17 +116,5 @@ class DepartmentServiceTests extends AbstractIntegrationTest {
         departmentService.delete(salesDepartment.getId());
         Assertions.assertEquals(1, departmentService.getAll(null).size());
         Assertions.assertThrows(NotFoundException.class, () -> departmentService.get(salesDepartment.getId()));
-    }
-
-    @Test
-    void getAllWithSearchTest() {
-        List<DepartmentEntity> results = departmentService.getAll("Отдел продаж");
-        Assertions.assertEquals(1, results.size());
-
-        results = departmentService.getAll("отдел");
-        Assertions.assertEquals(2, results.size());
-
-        results = departmentService.getAll(null);
-        Assertions.assertEquals(2, results.size());
     }
 }

@@ -1,8 +1,8 @@
-package com.hardware.hardware_structure;
+package com.hardware.hardware_structure.service.entity;
 
+import com.hardware.hardware_structure.service.AbstractIntegrationTest;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.StructureElementTypeEntity;
-import com.hardware.hardware_structure.service.entity.StructureElementTypeService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +31,21 @@ class StructureElementTypeServiceTests extends AbstractIntegrationTest {
         Assertions.assertEquals("Процессор", typeService.get(cpuType.getId()).getName());
 
         Assertions.assertThrows(NotFoundException.class, () -> typeService.get(0L));
+    }
+
+    @Test
+    void getAllWithSearchTest() {
+        List<StructureElementTypeEntity> results = typeService.getAll("Видеокарта");
+        Assertions.assertEquals(1, results.size());
+
+        results = typeService.getAll("память");
+        Assertions.assertEquals(1, results.size());
+
+        results = typeService.getAll("е");
+        Assertions.assertEquals(3, results.size());
+
+        results = typeService.getAll(null);
+        Assertions.assertEquals(4, results.size());
     }
 
     @Test
@@ -72,20 +87,5 @@ class StructureElementTypeServiceTests extends AbstractIntegrationTest {
         typeService.delete(cpuType.getId());
         Assertions.assertEquals(3, typeService.getAll(null).size());
         Assertions.assertThrows(NotFoundException.class, () -> typeService.get(cpuType.getId()));
-    }
-
-    @Test
-    void getAllWithSearchTest() {
-        List<StructureElementTypeEntity> results = typeService.getAll("Видеокарта");
-        Assertions.assertEquals(1, results.size());
-
-        results = typeService.getAll("память");
-        Assertions.assertEquals(1, results.size());
-
-        results = typeService.getAll("е");
-        Assertions.assertEquals(3, results.size());
-
-        results = typeService.getAll(null);
-        Assertions.assertEquals(4, results.size());
     }
 }

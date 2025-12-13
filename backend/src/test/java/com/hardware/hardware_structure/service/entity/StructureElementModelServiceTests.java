@@ -1,12 +1,10 @@
-package com.hardware.hardware_structure;
+package com.hardware.hardware_structure.service.entity;
 
+import com.hardware.hardware_structure.service.AbstractIntegrationTest;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.ManufacturerEntity;
 import com.hardware.hardware_structure.model.entity.StructureElementModelEntity;
 import com.hardware.hardware_structure.model.entity.StructureElementTypeEntity;
-import com.hardware.hardware_structure.service.entity.ManufacturerService;
-import com.hardware.hardware_structure.service.entity.StructureElementModelService;
-import com.hardware.hardware_structure.service.entity.StructureElementTypeService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +55,38 @@ class StructureElementModelServiceTests extends AbstractIntegrationTest {
         Assertions.assertEquals("Intel Core i7-11700", modelService.get(cpuI7.getId()).getName());
 
         Assertions.assertThrows(NotFoundException.class, () -> modelService.get(0L));
+    }
+
+    @Test
+    void getAllWithSearchAndPaginationTest() {
+        // Добавляем еще 3 RAM-модуля
+        createModel("Kingston DDR4 16GB", "Быстрая память", typeRam, manufacturerIntel, 80, 80, 90, 70, 60, 50);
+        createModel("Crucial DDR4 8GB", "Бюджетная память", typeRam, manufacturerAMD, 70, 90, 70, 60, 50, 40);
+        createModel("Corsair Vengeance", "Премиум память", typeRam, manufacturerIntel, 90, 70, 95, 80, 70, 60);
+
+        // 1. Поиск по имени "Intel": найдено только 2 модели
+        Page<StructureElementModelEntity> page = modelService.getAll("Intel", 0, 2);
+        Assertions.assertEquals(2, page.getTotalElements());
+        Assertions.assertEquals(2, page.getContent().size());
+        Assertions.assertEquals("Intel Core i7-11700", page.getContent().get(0).getName());
+        Assertions.assertEquals("Intel Core i5-11400", page.getContent().get(1).getName());
+
+        // 2. Вторая страница — пустая
+        page = modelService.getAll("Intel", 1, 2);
+        Assertions.assertEquals(2, page.getTotalElements());
+        Assertions.assertTrue(page.getContent().isEmpty());
+
+        // 3. Только пагинация (Страница 0, размер 4, всего 6 моделей)
+        page = modelService.getAll(null, 0, 4);
+        Assertions.assertEquals(6, page.getTotalElements());
+        Assertions.assertEquals(4, page.getContent().size());
+        Assertions.assertEquals(cpuI7.getName(), page.getContent().get(0).getName());
+
+        // 4. Пагинация (Страница 1, размер 4)
+        page = modelService.getAll(null, 1, 4);
+        Assertions.assertEquals(6, page.getTotalElements());
+        Assertions.assertEquals(2, page.getContent().size());
+        Assertions.assertEquals("Crucial DDR4 8GB", page.getContent().get(0).getName());
     }
 
     @Test
@@ -123,38 +153,6 @@ class StructureElementModelServiceTests extends AbstractIntegrationTest {
         modelService.delete(cpuI7.getId());
         Assertions.assertEquals(2, modelService.getAll(null).size());
         Assertions.assertThrows(NotFoundException.class, () -> modelService.get(cpuI7.getId()));
-    }
-
-    @Test
-    void getAllWithSearchAndPaginationTest() {
-        // Добавляем еще 3 RAM-модуля
-        createModel("Kingston DDR4 16GB", "Быстрая память", typeRam, manufacturerIntel, 80, 80, 90, 70, 60, 50);
-        createModel("Crucial DDR4 8GB", "Бюджетная память", typeRam, manufacturerAMD, 70, 90, 70, 60, 50, 40);
-        createModel("Corsair Vengeance", "Премиум память", typeRam, manufacturerIntel, 90, 70, 95, 80, 70, 60);
-
-        // 1. Поиск по имени "Intel": найдено только 2 модели
-        Page<StructureElementModelEntity> page = modelService.getAll("Intel", 0, 2);
-        Assertions.assertEquals(2, page.getTotalElements());
-        Assertions.assertEquals(2, page.getContent().size());
-        Assertions.assertEquals("Intel Core i7-11700", page.getContent().get(0).getName());
-        Assertions.assertEquals("Intel Core i5-11400", page.getContent().get(1).getName());
-
-        // 2. Вторая страница — пустая
-        page = modelService.getAll("Intel", 1, 2);
-        Assertions.assertEquals(2, page.getTotalElements());
-        Assertions.assertTrue(page.getContent().isEmpty());
-
-        // 3. Только пагинация (Страница 0, размер 4, всего 6 моделей)
-        page = modelService.getAll(null, 0, 4);
-        Assertions.assertEquals(6, page.getTotalElements());
-        Assertions.assertEquals(4, page.getContent().size());
-        Assertions.assertEquals(cpuI7.getName(), page.getContent().get(0).getName());
-
-        // 4. Пагинация (Страница 1, размер 4)
-        page = modelService.getAll(null, 1, 4);
-        Assertions.assertEquals(6, page.getTotalElements());
-        Assertions.assertEquals(2, page.getContent().size());
-        Assertions.assertEquals("Crucial DDR4 8GB", page.getContent().get(0).getName());
     }
 
     private StructureElementModelEntity createModel(String name, String description, StructureElementTypeEntity type,

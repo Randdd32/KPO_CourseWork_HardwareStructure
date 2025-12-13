@@ -1,13 +1,15 @@
-package com.hardware.hardware_structure;
+package com.hardware.hardware_structure.service.entity;
 
+import com.hardware.hardware_structure.service.AbstractIntegrationTest;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.PositionEntity;
-import com.hardware.hardware_structure.service.entity.PositionService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 class PositionServiceTests extends AbstractIntegrationTest {
 
@@ -29,6 +31,50 @@ class PositionServiceTests extends AbstractIntegrationTest {
         Assertions.assertEquals("Инженер", positionService.get(engineer.getId()).getName());
 
         Assertions.assertThrows(NotFoundException.class, () -> positionService.get(0L));
+    }
+
+    @Test
+    void getByIdsTest() {
+        List<PositionEntity> positions = positionService.getByIds(List.of(engineer.getId()));
+        Assertions.assertEquals(1, positions.size());
+        Assertions.assertEquals("Инженер", positions.get(0).getName());
+
+        Assertions.assertTrue(positionService.getByIds(null).isEmpty());
+        Assertions.assertTrue(positionService.getByIds(List.of()).isEmpty());
+    }
+
+    @Test
+    void getAllWithSearchAndPaginationTest() {
+        positionService.create(new PositionEntity("Программист", "Разработка приложений"));
+        positionService.create(new PositionEntity("Секретарь", "Административные задачи"));
+        positionService.create(new PositionEntity("Охранник", "Безопасность"));
+
+        // Поиск по части названия "ер" (ИнженЕР, МенеджЕР). Всего 2 должности.
+
+        // 1. Поиск и пагинация (Страница 0, размер 1, поиск "ер").
+        Page<PositionEntity> page = positionService.getAll("ер", 0, 1);
+        Assertions.assertEquals(2, page.getTotalElements());
+        Assertions.assertEquals(1, page.getContent().size());
+        // Сортировка по ID ASC: Инженер должен быть первым
+        Assertions.assertEquals("Инженер", page.getContent().get(0).getName());
+
+        // 2. Страница 1, размер 1, поиск "ер". Должность: "Менеджер".
+        page = positionService.getAll("ер", 1, 1);
+        Assertions.assertEquals(2, page.getTotalElements());
+        Assertions.assertEquals(1, page.getContent().size());
+        Assertions.assertEquals("Менеджер", page.getContent().get(0).getName());
+
+        // 3. Только пагинация (Страница 0, размер 4, всего 6 должностей)
+        page = positionService.getAll(null, 0, 4);
+        Assertions.assertEquals(6, page.getTotalElements());
+        Assertions.assertEquals(4, page.getContent().size());
+        Assertions.assertEquals("Инженер", page.getContent().get(0).getName());
+
+        // 4. Пагинация (Страница 1, размер 4)
+        page = positionService.getAll(null, 1, 4);
+        Assertions.assertEquals(6, page.getTotalElements());
+        Assertions.assertEquals(2, page.getContent().size());
+        Assertions.assertEquals("Секретарь", page.getContent().get(0).getName());
     }
 
     @Test
@@ -78,39 +124,5 @@ class PositionServiceTests extends AbstractIntegrationTest {
         positionService.delete(engineer.getId());
         Assertions.assertEquals(2, positionService.getAll(null).size());
         Assertions.assertThrows(NotFoundException.class, () -> positionService.get(engineer.getId()));
-    }
-
-    @Test
-    void getAllWithSearchAndPaginationTest() {
-        positionService.create(new PositionEntity("Программист", "Разработка приложений"));
-        positionService.create(new PositionEntity("Секретарь", "Административные задачи"));
-        positionService.create(new PositionEntity("Охранник", "Безопасность"));
-
-        // Поиск по части названия "ер" (ИнженЕР, МенеджЕР). Всего 2 должности.
-
-        // 1. Поиск и пагинация (Страница 0, размер 1, поиск "ер").
-        Page<PositionEntity> page = positionService.getAll("ер", 0, 1);
-        Assertions.assertEquals(2, page.getTotalElements());
-        Assertions.assertEquals(1, page.getContent().size());
-        // Сортировка по ID ASC: Инженер должен быть первым
-        Assertions.assertEquals("Инженер", page.getContent().get(0).getName());
-
-        // 2. Страница 1, размер 1, поиск "ер". Должность: "Менеджер".
-        page = positionService.getAll("ер", 1, 1);
-        Assertions.assertEquals(2, page.getTotalElements());
-        Assertions.assertEquals(1, page.getContent().size());
-        Assertions.assertEquals("Менеджер", page.getContent().get(0).getName());
-
-        // 3. Только пагинация (Страница 0, размер 4, всего 6 должностей)
-        page = positionService.getAll(null, 0, 4);
-        Assertions.assertEquals(6, page.getTotalElements());
-        Assertions.assertEquals(4, page.getContent().size());
-        Assertions.assertEquals("Инженер", page.getContent().get(0).getName());
-
-        // 4. Пагинация (Страница 1, размер 4)
-        page = positionService.getAll(null, 1, 4);
-        Assertions.assertEquals(6, page.getTotalElements());
-        Assertions.assertEquals(2, page.getContent().size());
-        Assertions.assertEquals("Секретарь", page.getContent().get(0).getName());
     }
 }

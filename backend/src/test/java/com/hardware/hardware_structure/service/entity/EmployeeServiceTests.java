@@ -1,22 +1,27 @@
-package com.hardware.hardware_structure;
+package com.hardware.hardware_structure.service.entity;
 
+import com.hardware.hardware_structure.service.AbstractIntegrationTest;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.DepartmentEntity;
 import com.hardware.hardware_structure.model.entity.EmployeeEntity;
 import com.hardware.hardware_structure.model.entity.PositionEntity;
-import com.hardware.hardware_structure.service.entity.DepartmentService;
-import com.hardware.hardware_structure.service.entity.EmployeeService;
-import com.hardware.hardware_structure.service.entity.PositionService;
+import com.hardware.hardware_structure.model.entity.UserEntity;
+import com.hardware.hardware_structure.model.enums.UserRole;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 class EmployeeServiceTests extends AbstractIntegrationTest {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private DepartmentService departmentService;
@@ -53,6 +58,64 @@ class EmployeeServiceTests extends AbstractIntegrationTest {
         Assertions.assertEquals("Иванов", employeeService.get(mainEmployee.getId()).getLastName());
 
         Assertions.assertThrows(NotFoundException.class, () -> employeeService.get(0L));
+    }
+
+    @Test
+    void getAllWithSearchAndPaginationTest() {
+        Page<EmployeeEntity> page = employeeService.getAll("Ива", null, 0, 10);
+        Assertions.assertEquals(1, page.getTotalElements());
+        Assertions.assertEquals("Иванов", page.getContent().get(0).getLastName());
+
+        page = employeeService.getAll("Алексей", null, 0, 10);
+        Assertions.assertEquals(1, page.getTotalElements());
+        Assertions.assertEquals("Петров", page.getContent().get(0).getLastName());
+
+        page = employeeService.getAll("ивАН", null, 0, 10);
+        Assertions.assertEquals(1, page.getTotalElements());
+
+        employeeService.create(new EmployeeEntity("Афанасьев", "Дмитрий", null, itDepartment, engineerPosition));
+        employeeService.create(new EmployeeEntity("Васильев", "Егор", null, hrDepartment, hrPosition));
+        // Всего 5 сотрудников
+
+        // Страница 0, размер 2 (Сортировка по ID ASC: Иванов, Петров)
+        page = employeeService.getAll(null, null, 0, 2);
+        Assertions.assertEquals(5, page.getTotalElements());
+        Assertions.assertEquals(2, page.getContent().size());
+        Assertions.assertEquals("Иванов", page.getContent().get(0).getLastName());
+        Assertions.assertEquals("Петров", page.getContent().get(1).getLastName());
+
+        // Страница 2, размер 2 (последний элемент: Васильев)
+        page = employeeService.getAll(null, null, 2, 2);
+        Assertions.assertEquals(5, page.getTotalElements());
+        Assertions.assertEquals(1, page.getContent().size());
+        Assertions.assertEquals("Васильев", page.getContent().get(0).getLastName());
+
+        // Создаем пользователя для "Иванов" (mainEmployee)
+        userService.create(new UserEntity(
+                "ivanov@test.com", "Passsss123!", "+79001112233",
+                UserRole.USER,
+                mainEmployee
+        ));
+
+        page = employeeService.getAll(null, true, 0, 10);
+        Assertions.assertEquals(4, page.getTotalElements());
+        boolean containsIvanov = page.getContent().stream()
+                .anyMatch(e -> e.getLastName().equals("Иванов"));
+        Assertions.assertFalse(containsIvanov, "Список не должен содержать сотрудника с аккаунтом при withoutAccount=true");
+
+        page = employeeService.getAll(null, false, 0, 10);
+        Assertions.assertEquals(1, page.getTotalElements());
+        Assertions.assertEquals("Иванов", page.getContent().get(0).getLastName());
+    }
+
+    @Test
+    void getByIdsTest() {
+        List<EmployeeEntity> employees = employeeService.getByIds(List.of(mainEmployee.getId()));
+        Assertions.assertEquals(1, employees.size());
+        Assertions.assertEquals("Иванов", employees.get(0).getLastName());
+
+        Assertions.assertTrue(employeeService.getByIds(null).isEmpty());
+        Assertions.assertTrue(employeeService.getByIds(List.of()).isEmpty());
     }
 
     @Test
@@ -109,36 +172,5 @@ class EmployeeServiceTests extends AbstractIntegrationTest {
         employeeService.delete(mainEmployee.getId());
         Assertions.assertEquals(2, employeeService.getAll(null).size());
         Assertions.assertThrows(NotFoundException.class, () -> employeeService.get(mainEmployee.getId()));
-    }
-
-    @Test
-    void getAllWithSearchAndPaginationTest() {
-        Page<EmployeeEntity> page = employeeService.getAll("Ива", 0, 10);
-        Assertions.assertEquals(1, page.getTotalElements());
-        Assertions.assertEquals("Иванов", page.getContent().get(0).getLastName());
-
-        page = employeeService.getAll("Алексей", 0, 10);
-        Assertions.assertEquals(1, page.getTotalElements());
-        Assertions.assertEquals("Петров", page.getContent().get(0).getLastName());
-
-        page = employeeService.getAll("ивАН", 0, 10);
-        Assertions.assertEquals(1, page.getTotalElements());
-
-        employeeService.create(new EmployeeEntity("Афанасьев", "Дмитрий", null, itDepartment, engineerPosition));
-        employeeService.create(new EmployeeEntity("Васильев", "Егор", null, hrDepartment, hrPosition));
-        // Всего 5 сотрудников
-
-        // Страница 0, размер 2 (Сортировка по ID ASC: Иванов, Петров)
-        page = employeeService.getAll(null, 0, 2);
-        Assertions.assertEquals(5, page.getTotalElements());
-        Assertions.assertEquals(2, page.getContent().size());
-        Assertions.assertEquals("Иванов", page.getContent().get(0).getLastName());
-        Assertions.assertEquals("Петров", page.getContent().get(1).getLastName());
-
-        // Страница 2, размер 2 (последний элемент: Васильев)
-        page = employeeService.getAll(null, 2, 2);
-        Assertions.assertEquals(5, page.getTotalElements());
-        Assertions.assertEquals(1, page.getContent().size());
-        Assertions.assertEquals("Васильев", page.getContent().get(0).getLastName());
     }
 }

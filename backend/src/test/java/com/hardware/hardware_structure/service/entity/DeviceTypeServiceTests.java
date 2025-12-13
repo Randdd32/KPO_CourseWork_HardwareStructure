@@ -1,8 +1,8 @@
-package com.hardware.hardware_structure;
+package com.hardware.hardware_structure.service.entity;
 
+import com.hardware.hardware_structure.service.AbstractIntegrationTest;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.DeviceTypeEntity;
-import com.hardware.hardware_structure.service.entity.DeviceTypeService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +30,31 @@ class DeviceTypeServiceTests extends AbstractIntegrationTest {
         Assertions.assertEquals("Монитор", deviceTypeService.get(mainType.getId()).getName());
 
         Assertions.assertThrows(NotFoundException.class, () -> deviceTypeService.get(0L));
+    }
+
+    @Test
+    void getByIdsTest() {
+        List<DeviceTypeEntity> deviceTypes = deviceTypeService.getByIds(List.of(mainType.getId()));
+        Assertions.assertEquals(1, deviceTypes.size());
+        Assertions.assertEquals("Монитор", deviceTypes.get(0).getName());
+
+        Assertions.assertTrue(deviceTypeService.getByIds(null).isEmpty());
+        Assertions.assertTrue(deviceTypeService.getByIds(List.of()).isEmpty());
+    }
+
+    @Test
+    void getAllWithSearchTest() {
+        List<DeviceTypeEntity> results = deviceTypeService.getAll("Принтер");
+        Assertions.assertEquals(1, results.size());
+
+        results = deviceTypeService.getAll("ноу");
+        Assertions.assertEquals(1, results.size());
+
+        results = deviceTypeService.getAll("р");
+        Assertions.assertEquals(2, results.size());
+
+        results = deviceTypeService.getAll(null);
+        Assertions.assertEquals(3, results.size());
     }
 
     @Test
@@ -77,20 +102,5 @@ class DeviceTypeServiceTests extends AbstractIntegrationTest {
         deviceTypeService.delete(mainType.getId());
         Assertions.assertEquals(2, deviceTypeService.getAll(null).size());
         Assertions.assertThrows(NotFoundException.class, () -> deviceTypeService.get(mainType.getId()));
-    }
-
-    @Test
-    void getAllWithSearchTest() {
-        List<DeviceTypeEntity> results = deviceTypeService.getAll("Принтер");
-        Assertions.assertEquals(1, results.size());
-
-        results = deviceTypeService.getAll("ноу");
-        Assertions.assertEquals(1, results.size());
-
-        results = deviceTypeService.getAll("р");
-        Assertions.assertEquals(2, results.size());
-
-        results = deviceTypeService.getAll(null);
-        Assertions.assertEquals(3, results.size());
     }
 }

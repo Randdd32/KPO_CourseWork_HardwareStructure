@@ -1,8 +1,8 @@
-package com.hardware.hardware_structure;
+package com.hardware.hardware_structure.service.entity;
 
+import com.hardware.hardware_structure.service.AbstractIntegrationTest;
 import com.hardware.hardware_structure.core.error.NotFoundException;
 import com.hardware.hardware_structure.model.entity.ManufacturerEntity;
-import com.hardware.hardware_structure.service.entity.ManufacturerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +30,31 @@ class ManufacturerServiceTests extends AbstractIntegrationTest {
         Assertions.assertEquals("Dell", manufacturerService.get(dell.getId()).getName());
 
         Assertions.assertThrows(NotFoundException.class, () -> manufacturerService.get(0L));
+    }
+
+    @Test
+    void getByIdsTest() {
+        List<ManufacturerEntity> manufacturers = manufacturerService.getByIds(List.of(dell.getId()));
+        Assertions.assertEquals(1, manufacturers.size());
+        Assertions.assertEquals("Dell", manufacturers.get(0).getName());
+
+        Assertions.assertTrue(manufacturerService.getByIds(null).isEmpty());
+        Assertions.assertTrue(manufacturerService.getByIds(List.of()).isEmpty());
+    }
+
+    @Test
+    void getAllWithSearchTest() {
+        List<ManufacturerEntity> results = manufacturerService.getAll("Cisco");
+        Assertions.assertEquals(1, results.size());
+
+        results = manufacturerService.getAll("hP");
+        Assertions.assertEquals(1, results.size());
+
+        results = manufacturerService.getAll("l");
+        Assertions.assertEquals(1, results.size());
+
+        results = manufacturerService.getAll(null);
+        Assertions.assertEquals(3, results.size());
     }
 
     @Test
@@ -72,20 +97,5 @@ class ManufacturerServiceTests extends AbstractIntegrationTest {
         manufacturerService.delete(dell.getId());
         Assertions.assertEquals(2, manufacturerService.getAll(null).size());
         Assertions.assertThrows(NotFoundException.class, () -> manufacturerService.get(dell.getId()));
-    }
-
-    @Test
-    void getAllWithSearchTest() {
-        List<ManufacturerEntity> results = manufacturerService.getAll("Cisco");
-        Assertions.assertEquals(1, results.size());
-
-        results = manufacturerService.getAll("hP");
-        Assertions.assertEquals(1, results.size());
-
-        results = manufacturerService.getAll("l");
-        Assertions.assertEquals(1, results.size());
-
-        results = manufacturerService.getAll(null);
-        Assertions.assertEquals(3, results.size());
     }
 }
