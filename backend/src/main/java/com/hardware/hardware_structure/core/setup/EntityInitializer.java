@@ -1,5 +1,6 @@
 package com.hardware.hardware_structure.core.setup;
 
+import com.hardware.hardware_structure.core.configuration.AppConfigurationProperties;
 import com.hardware.hardware_structure.core.log.Loggable;
 import com.hardware.hardware_structure.core.utility.Formatter;
 import com.hardware.hardware_structure.model.entity.BuildingEntity;
@@ -13,7 +14,9 @@ import com.hardware.hardware_structure.model.entity.ManufacturerEntity;
 import com.hardware.hardware_structure.model.entity.PositionEntity;
 import com.hardware.hardware_structure.model.entity.StructureElementModelEntity;
 import com.hardware.hardware_structure.model.entity.StructureElementTypeEntity;
+import com.hardware.hardware_structure.model.entity.UserEntity;
 import com.hardware.hardware_structure.model.enums.LocationType;
+import com.hardware.hardware_structure.model.enums.UserRole;
 import com.hardware.hardware_structure.service.entity.BuildingService;
 import com.hardware.hardware_structure.service.entity.DepartmentService;
 import com.hardware.hardware_structure.service.entity.DeviceModelService;
@@ -25,6 +28,7 @@ import com.hardware.hardware_structure.service.entity.ManufacturerService;
 import com.hardware.hardware_structure.service.entity.PositionService;
 import com.hardware.hardware_structure.service.entity.StructureElementModelService;
 import com.hardware.hardware_structure.service.entity.StructureElementTypeService;
+import com.hardware.hardware_structure.service.entity.UserService;
 import com.hardware.hardware_structure.web.dto.entity.DeviceModelStructureElementIdDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -47,6 +51,8 @@ public class EntityInitializer {
     private final PositionService positionService;
     private final StructureElementModelService structureElementModelService;
     private final StructureElementTypeService structureElementTypeService;
+    private final UserService userService;
+    private final AppConfigurationProperties appConfigurationProperties;
 
     @Loggable
     @Transactional
@@ -62,6 +68,7 @@ public class EntityInitializer {
         List<EmployeeEntity> employees = createEmployees(positions, departments);
         List<LocationEntity> locations = createLocations(buildings, departments, employees);
         createDevices(deviceModels, locations, employees);
+        createUser(employees.get(6));
     }
 
     @Loggable
@@ -553,6 +560,12 @@ public class EntityInitializer {
         deviceService.create(new DeviceEntity("SN6376543730", Formatter.parse("2022-07-01T00:00:00Z"), Formatter.parse("2025-07-01T00:00:00Z"), 45000.00, true, "Офисный ПК в отделе логистики, гарантия истекает в ближайшее время.", models.get(4), locations.get(3), employees.get(14)));
         deviceService.create(new DeviceEntity("SN9775313543", Formatter.parse("2022-03-01T00:00:00Z"), Formatter.parse("2024-03-01T00:00:00Z"), 30000.00, false, "Монитор со сломанной матрицей, предназначен для списания.", models.get(7), locations.get(7), employees.get(6)));
         deviceService.create(new DeviceEntity("SN4325312106", Formatter.parse("2021-09-01T00:00:00Z"), Formatter.parse("2023-09-01T00:00:00Z"), 18000.00, true, "Принтер для черновых распечаток, активно используется. Гарантия истекла.", models.get(10), locations.get(6), employees.get(4)));
+    }
+
+    @Loggable
+    private void createUser(EmployeeEntity employee) {
+        userService.create(new UserEntity(appConfigurationProperties.getAdmin().getEmail(), appConfigurationProperties.getAdmin().getPassword(),
+                appConfigurationProperties.getAdmin().getNumber(), UserRole.SUPER_ADMIN, employee));
     }
 
     private DeviceModelStructureElementIdDto createDto(Long structureElementId, int count) {
