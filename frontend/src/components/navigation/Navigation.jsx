@@ -4,7 +4,7 @@ import {
 } from 'react-router-dom';
 import Logo from '../../assets/icons/logo.png';
 import User from '../../assets/icons/user.png';
-import { Navbar, Nav, Container, Form, FormControl, Button } from 'react-bootstrap';
+import { Navbar, Nav, Container, Form, FormControl, Button, NavDropdown } from 'react-bootstrap';
 import { observer } from "mobx-react-lite";
 import SearchContext from './SearchContext.jsx';
 import StoreContext from '../users/StoreContext.jsx';
