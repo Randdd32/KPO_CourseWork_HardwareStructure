@@ -1,0 +1,37 @@
+.pagination-floating {
+    margin: 2rem 0;
+}
+
+.pagination-floating .page-link {
+    border: none;
+    padding: 15px 22px;
+    margin: 0 5px;
+    border-radius: 10px;
+    background: white;
+    color: #495057;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.pagination-floating .page-item.active .page-link {
+    background: #007bff;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+}
+
+.pagination-floating .page-link:hover {
+    background: #007bff;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+}
+
+.pagination-floating .page-item.disabled .page-link {
+    background: #f8f9fa;
+    color: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
