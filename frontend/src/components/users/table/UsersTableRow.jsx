@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button } from 'react-bootstrap';
+import { Button, ButtonGroup } from 'react-bootstrap';
 
 const UsersTableRow = ({ user, onDelete, onEditInPage }) => {
   const isTargetSuperAdmin = user.role === 'Супер-администратор';
