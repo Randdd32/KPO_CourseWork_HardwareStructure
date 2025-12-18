@@ -13,6 +13,7 @@ public class DepartmentsCrudTest extends AbstractCrudTest {
     @Test
     public void testDepartmentsFullCycle() {
         DepartmentsPage page = new DepartmentsPage(driver);
+
         String deptName = "Тестовый Отдел " + System.currentTimeMillis();
         String updatedName = deptName + " (Обновлен)";
 

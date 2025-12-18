@@ -39,6 +39,6 @@ public class DeviceModelsCrudTest extends AbstractCrudTest {
 
         clickDelete(updatedName);
         boolean isDeleted = driver.findElements(By.xpath("//td[contains(text(), '" + updatedName + "')]")).isEmpty();
-        Assert.assertTrue(isDeleted, "Модель устройства должна быть удалена из таблицы");
+        Assert.assertTrue(isDeleted, "Элемент должен быть удален из таблицы");
     }
 }

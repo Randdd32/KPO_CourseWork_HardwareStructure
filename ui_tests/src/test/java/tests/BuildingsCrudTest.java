@@ -10,6 +10,7 @@ public class BuildingsCrudTest extends AbstractCrudTest {
     @Test
     public void testBuildingsFullCycle() {
         BuildingsPage buildingsPage = new BuildingsPage(driver);
+
         String name = "Тестовое Здание " + System.currentTimeMillis();
         String address = "г. Москва, ул. Тестов, д. 1";
         String updatedName = name + " UPD";
