@@ -36,6 +36,8 @@ import PageDevicesByDateReport from './pages/PageDevicesByDateReport.jsx';
 import PageDevicesWithStructureReport from './pages/PageDevicesWithStructureReport.jsx';
 import PageLocationsWithEmployeesReport from './pages/PageLocationsWithEmployeesReport.jsx';
 import ProtectedAdminRoute from './components/security/ProtectedAdminRoute.jsx';
+import PageDeviceDetails from './pages/PageDeviceDetails.jsx';
+import PageSearch from './pages/PageSearch.jsx';
 
 const routes = [
   { index: true, path: '/', element: <PageMain />, title: 'Главная страница' },
@@ -53,6 +55,7 @@ const routes = [
   { path: '/admin/device-models', element: <ProtectedAdminRoute><PageDeviceModels /></ProtectedAdminRoute>, title: 'Панель администратора. Модели устройств' },
 
   { path: '/admin/device/:id?', element: <ProtectedAdminRoute><PageDevice /></ProtectedAdminRoute>, title: 'Панель администратора. Устройство' },
+  { path: '/device-details/:id', element: <PageDeviceDetails />, title: 'Устройство. Подробная информация' },
   { path: '/admin/devices', element: <ProtectedAdminRoute><PageDevices /></ProtectedAdminRoute>, title: 'Панель администратора. Устройства' },
 
   { path: '/admin/device-type/:id?', element: <ProtectedAdminRoute><PageDeviceType /></ProtectedAdminRoute>, title: 'Панель администратора. Тип устройства' },
@@ -80,6 +83,8 @@ const routes = [
   { path: '/admin/reports/devices-by-date', element: <ProtectedAdminRoute><PageDevicesByDateReport /></ProtectedAdminRoute>, title: 'Панель администратора. Устройства по дате - отчет' },
   { path: '/admin/reports/devices-with-structure', element: <ProtectedAdminRoute><PageDevicesWithStructureReport /></ProtectedAdminRoute>, title: 'Панель администратора. Устройства со структурой - отчет' },
   { path: '/admin/reports/locations-with-employees', element: <ProtectedAdminRoute><PageLocationsWithEmployeesReport /></ProtectedAdminRoute>, title: 'Панель администратора. Помещения с сотрудниками - отчет' },
+
+  { path: '/search', element: <PageSearch />, title: 'Поиск устройств' }
 ];
 
 const router = createBrowserRouter([

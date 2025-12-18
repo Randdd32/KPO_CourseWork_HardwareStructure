@@ -1,0 +1,92 @@
+.device-detail-image {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.device-serial-number {
+    font-size: 26px; 
+    font-weight: 600;
+    line-height: 100%;
+}
+
+.device-characteristics-list {
+    font-size: 16px;
+    margin-bottom: 0 !important;
+}
+
+.device-characteristics-list dt {
+    color: rgb(97, 95, 95);
+    font-weight: 600 !important;
+    padding-left: 0;
+}
+
+.device-characteristics-list dd {
+    padding-left: 0;
+    font-weight: 700;
+}
+
+.device-action-button {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+}
+
+.device-status-container {
+    width: 294px;
+}
+
+.device-support-button {
+    font-size: 21px;
+    font-weight: 600;
+    transition: opacity 0.25s;
+    width: 100%;
+}
+
+.device-support-button:hover {
+    opacity: 0.85;
+}
+
+.device-status-mobile-column {
+    margin-top: 20px;
+}
+
+.device-description-h {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.device-description-text {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+@media (max-width: 576px) {
+    .device-characteristics-list {
+        display: inline-block;
+    }
+
+    .device-characteristics-list dt,
+    .device-characteristics-list dd {
+        text-align: left;
+        padding-right: 0;
+    }
+
+    .device-image-column .block {
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 320px) {
+    .device-support-button,
+    .device-description-h,
+    .device-description-text {
+        font-size: 16px !important;
+    }
+    .device-serial-number {
+        font-size: 20px !important;
+    }
+}

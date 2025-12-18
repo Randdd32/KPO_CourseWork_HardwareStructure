@@ -18,6 +18,19 @@ const Navigation = observer(({ routes }) => {
   const { store } = useContext(StoreContext);
   const { searchValue, updateSearchValue } = useContext(SearchContext);
 
+  const handleSearchKeyDown = (event) => {
+    if (event.key === 'Enter' && event.target.value.trim() !== '') {
+      navigate(`/search?searchInfo=${encodeURIComponent(searchValue.trim())}`, { replace: false });
+    }
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    if (searchValue.trim() !== '') {
+      navigate(`/search?searchInfo=${encodeURIComponent(searchValue.trim())}`, { replace: false });
+    }
+  };
+
   const handleLogout = async () => {
     await store.logout();
     navigate('/', { replace: false });
@@ -59,7 +72,7 @@ const Navigation = observer(({ routes }) => {
           )}
 
           <div className="search-wrapper d-flex flex-grow-1 order-1 order-lg-1 my-2 my-lg-0">
-            <Form className="d-flex w-100">
+            <Form className="d-flex w-100" onSubmit={handleSearchSubmit}>
               <FormControl
                 type="search"
                 placeholder="Поиск устройств..."
@@ -67,6 +80,7 @@ const Navigation = observer(({ routes }) => {
                 aria-label="Search"
                 value={searchValue}
                 onChange={(e) => updateSearchValue(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
                 maxLength={100}
               />
               <Button variant="outline-light" type="submit">Поиск</Button>

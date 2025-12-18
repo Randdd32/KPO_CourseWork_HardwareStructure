@@ -23,7 +23,8 @@ const PageDevicesWithStructureReport = () => {
   };
 
   const handleShowReport = async () => {
-    if (!validateDevices()) return;
+    if (!validateDevices())
+      return;
 
     setIsLoading(true);
     setReportHtml('');

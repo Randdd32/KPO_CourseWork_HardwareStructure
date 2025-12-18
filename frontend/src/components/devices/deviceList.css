@@ -1,0 +1,53 @@
+.device-list-sort-select {
+  font-size: 14px;
+  font-weight: 500;
+  width: 264px;
+  height: 35px;
+}
+
+.filter-sidebar {
+    background: white;
+    border-radius: 12px;
+    top: 20px;
+    height: fit-content;
+}
+
+.filter-group {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.device-cards-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+  align-items: stretch; 
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .device-cards-grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .device-cards-grid-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 361px) {
+  .device-list-sort-select {
+    font-size: 13px;
+    width: 200px;
+  } 
+}
+
+@media (max-width: 272px) {
+  .catalog-select {
+    width: 140px;
+    font-size: 11px;
+  }
+}

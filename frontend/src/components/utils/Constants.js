@@ -1,5 +1,7 @@
 export const PAGE_SIZE = 8;
 
+export const SEARCH_PAGE_SIZE = 16;
+
 export const NAME_PATTERN = /^[A-Za-zА-Яа-яЁё\-]{1,50}$/;
 
 export const PASSWORD_PATTERN_STRING = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+\\-]).{8,60}$";

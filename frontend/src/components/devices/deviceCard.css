@@ -1,0 +1,35 @@
+.device-card-image-custom {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: contain;
+}
+
+.device-card-link {
+  display: contents;
+}
+
+.device-card-grid-item {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 460px) {
+  .device-card-image-custom {
+    max-width: 88px;
+    max-height: 88px;
+  }
+}
+
+@media (max-width: 400px) {
+  .device-card-image-custom {
+    max-width: 78px;
+    max-height: 78px;
+  }
+}
+
+@media (max-width: 360px) {
+  .device-card-image-custom {
+    max-width: 70px;
+    max-height: 70px;
+  }
+}
