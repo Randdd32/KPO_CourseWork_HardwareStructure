@@ -78,7 +78,7 @@ class BuildingServiceTests extends AbstractIntegrationTest {
 
     @Test
     void updateTest() {
-        final String newName = "Новое Главное здание";
+        final String newName = "Новое главное здание";
         final String newAddress = "Новый адрес";
 
         final BuildingEntity updatedEntity = buildingService.update(

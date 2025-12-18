@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -70,6 +71,7 @@ public class JwtUtils {
 
     public String generateAccessToken(final UserEntity user) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("jti", UUID.randomUUID().toString());
         claims.put("user_id", user.getId());
         claims.put("role", user.getRole().name());
         return createToken(claims, user.getEmail(), TimeUnit.MINUTES.toMillis(15));
@@ -77,6 +79,7 @@ public class JwtUtils {
 
     public String generateRefreshToken(final UserEntity user) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("jti", UUID.randomUUID().toString());
         return createToken(claims, user.getEmail(), TimeUnit.DAYS.toMillis(30));
     }
 
