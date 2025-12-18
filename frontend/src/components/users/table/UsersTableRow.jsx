@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Button, ButtonGroup } from 'react-bootstrap';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const UsersTableRow = ({ user, onDelete, onEditInPage }) => {
   const isTargetSuperAdmin = user.role === 'Супер-администратор';
