@@ -10,6 +10,7 @@ import SearchContext from './SearchContext.jsx';
 import StoreContext from '../users/StoreContext.jsx';
 import './navigation.css';
 import EntitiesDropdown from './EntitiesDropdown.jsx';
+import ReportsDropdown from './ReportsDropdown.jsx';
 
 const Navigation = observer(({ routes }) => {
   const indexPageLink = routes.filter((route) => route.index === false).shift();
@@ -76,7 +77,10 @@ const Navigation = observer(({ routes }) => {
             <Nav className="me-auto mt-2 mb-lg-0">
               <NavLink to="/" className="nav-link ps-0">Главная</NavLink>
               {store.isAdmin && (
-                <EntitiesDropdown />
+                <>
+                  <EntitiesDropdown />
+                  <ReportsDropdown />
+                </>
               )}
               {store.isAuth && (
                 <div className="d-lg-none">

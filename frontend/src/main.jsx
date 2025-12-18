@@ -32,6 +32,9 @@ import PageStructureElementTypes from './pages/PageStructureElementTypes.jsx';
 import PageUser from './pages/PageUser.jsx';
 import PageUserProfile from './pages/PageUserProfile.jsx';
 import PageUsers from './pages/PageUsers.jsx';
+import PageDevicesByDateReport from './pages/PageDevicesByDateReport.jsx';
+import PageDevicesWithStructureReport from './pages/PageDevicesWithStructureReport.jsx';
+import PageLocationsWithEmployeesReport from './pages/PageLocationsWithEmployeesReport.jsx';
 import ProtectedAdminRoute from './components/security/ProtectedAdminRoute.jsx';
 
 const routes = [
@@ -73,6 +76,10 @@ const routes = [
   { path: '/admin/user/:id?', element: <ProtectedAdminRoute><PageUser /></ProtectedAdminRoute>, title: 'Панель администратора. Пользователь' },
   { path: '/user/:id', element: <PageUserProfile />, title: 'Профиль' },
   { path: '/admin/users', element: <ProtectedAdminRoute><PageUsers /></ProtectedAdminRoute>, title: 'Панель администратора. Пользователи' },
+
+  { path: '/admin/reports/devices-by-date', element: <ProtectedAdminRoute><PageDevicesByDateReport /></ProtectedAdminRoute>, title: 'Панель администратора. Устройства по дате - отчет' },
+  { path: '/admin/reports/devices-with-structure', element: <ProtectedAdminRoute><PageDevicesWithStructureReport /></ProtectedAdminRoute>, title: 'Панель администратора. Устройства со структурой - отчет' },
+  { path: '/admin/reports/locations-with-employees', element: <ProtectedAdminRoute><PageLocationsWithEmployeesReport /></ProtectedAdminRoute>, title: 'Панель администратора. Помещения с сотрудниками - отчет' },
 ];
 
 const router = createBrowserRouter([
