@@ -14,21 +14,21 @@ import java.util.Map;
 public class ErrorDetails {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
     private Instant timestamp;
-    private String errorCode;
+    private String error;
     private String message;
     private String details;
     private Map<String, String> fieldErrors;
 
-    public ErrorDetails(String errorCode, String message, String details) {
+    public ErrorDetails(String error, String message, String details) {
         this.timestamp = Instant.now();
-        this.errorCode = errorCode;
+        this.error = error;
         this.message = message;
         this.details = details;
     }
 
-    public ErrorDetails(String errorCode, String message, String details, Map<String, String> fieldErrors) {
+    public ErrorDetails(String error, String message, String details, Map<String, String> fieldErrors) {
         this.timestamp = Instant.now();
-        this.errorCode = errorCode;
+        this.error = error;
         this.message = message;
         this.details = details;
         this.fieldErrors = fieldErrors;
