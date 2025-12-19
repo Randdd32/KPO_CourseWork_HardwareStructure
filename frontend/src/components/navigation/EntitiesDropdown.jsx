@@ -14,7 +14,8 @@ const navItems = [
   { to: '/admin/manufacturers', label: 'Производители' },
   { to: '/admin/positions', label: 'Должности' },
   { to: '/admin/structure-element-models', label: 'Модели элементов структуры' },
-  { to: '/admin/structure-element-types', label: 'Типы элементов структуры' }
+  { to: '/admin/structure-element-types', label: 'Типы элементов структуры' },
+  { to: '/admin/users', label: 'Пользователи' }
 ];
 
 const EntitiesDropdown = () => {
