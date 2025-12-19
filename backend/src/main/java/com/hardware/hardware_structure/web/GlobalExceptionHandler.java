@@ -1,10 +1,17 @@
 package com.hardware.hardware_structure.web;
 
 import com.hardware.hardware_structure.core.error.ErrorDetails;
+import com.hardware.hardware_structure.core.error.InvalidOtpException;
 import com.hardware.hardware_structure.core.error.NotFoundException;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +25,31 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleUsernameNotFoundException(UsernameNotFoundException ex, WebRequest request) {
+        return buildResponse("USER_NOT_FOUND", ex, request, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorDetails> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+        return buildResponse("BAD_CREDENTIALS", ex, request, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(CredentialsExpiredException.class)
+    public ResponseEntity<ErrorDetails> handleCredentialsExpiredException(CredentialsExpiredException ex, WebRequest request) {
+        return buildResponse("CREDENTIALS_EXPIRED", ex, request, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InvalidOtpException.class)
+    public ResponseEntity<ErrorDetails> handleInvalidOtpException(InvalidOtpException ex, WebRequest request) {
+        return buildResponse("INVALID_OTP", ex, request, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorDetails> handleExpiredJwtException(ExpiredJwtException ex, WebRequest request) {
+        return buildResponse("EXPIRED_JWT", ex, request, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorDetails> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
         return buildResponse("INVALID_ARGUMENT", ex, request, HttpStatus.BAD_REQUEST);
@@ -31,6 +63,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorDetails> handleNotFoundException(NotFoundException ex, WebRequest request) {
         return buildResponse("RESOURCE_NOT_FOUND", ex, request, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(JRException.class)
+    public ResponseEntity<ErrorDetails> handleJRException(JRException ex, WebRequest request) {
+        return buildResponse("REPORT_GENERATION_FAILED", ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<ErrorDetails> handleMessagingException(MessagingException ex, WebRequest request) {
+        return buildResponse("EMAIL_SEND_FAILED", ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

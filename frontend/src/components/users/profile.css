@@ -1,0 +1,57 @@
+.profile-container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  width: 100%;
+}
+
+.profile-list {
+  overflow: hidden;
+  font-size: 16px;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+}
+
+.profile-list dt, .profile-list dd {
+  height: 2.5em;
+  line-height: 2.5em;
+  padding: 0 0.625em 0 0.875em;
+  box-sizing: border-box;
+}
+
+.profile-list dt {
+  width: 35%;
+  float: left;
+  clear: right;
+  background: #000;
+  color: #fff;
+  font-weight: bold;
+}
+
+.profile-list dd {
+  width: 65%;
+  float: right;
+  margin-left: 0;
+  margin-bottom: .3125em;
+  border: 1px solid #444;
+  border-left: none;
+  background: #fff; 
+  color: #000;
+}
+
+.support-text {
+  color: #333;
+  font-size: 14px;
+}
+
+.support-link {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.support-link:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}

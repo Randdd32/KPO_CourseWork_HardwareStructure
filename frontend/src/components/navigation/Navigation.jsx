@@ -1,16 +1,41 @@
 import { useContext } from 'react';
 import {
-  Link, NavLink
+  Link, NavLink, useNavigate
 } from 'react-router-dom';
 import Logo from '../../assets/icons/logo.png';
-import { Navbar, Nav, Container, Form, FormControl, Button } from 'react-bootstrap';
+import User from '../../assets/icons/user.png';
+import { Navbar, Nav, Container, Form, FormControl, Button, NavDropdown } from 'react-bootstrap';
+import { observer } from "mobx-react-lite";
 import SearchContext from './SearchContext.jsx';
+import StoreContext from '../users/StoreContext.jsx';
 import './navigation.css';
 import EntitiesDropdown from './EntitiesDropdown.jsx';
+import ReportsDropdown from './ReportsDropdown.jsx';
 
-const Navigation = ({ routes }) => {
+const Navigation = observer(({ routes }) => {
   const indexPageLink = routes.filter((route) => route.index === false).shift();
+  const navigate = useNavigate();
+  const { store } = useContext(StoreContext);
   const { searchValue, updateSearchValue } = useContext(SearchContext);
+
+  const handleSearchKeyDown = (event) => {
+    if (event.key === 'Enter' && event.target.value.trim() !== '') {
+      navigate(`/search?searchInfo=${encodeURIComponent(searchValue.trim())}`, { replace: false });
+    }
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    if (searchValue.trim() !== '') {
+      navigate(`/search?searchInfo=${encodeURIComponent(searchValue.trim())}`, { replace: false });
+    }
+  };
+
+  const handleLogout = async () => {
+    await store.logout();
+    navigate('/', { replace: false });
+    window.location.reload();
+  };
 
   return (
     <header className="w-100 position-sticky top-0 z-3">
@@ -25,8 +50,29 @@ const Navigation = ({ routes }) => {
 
           <Navbar.Toggle aria-controls="navbarNav" className="order-2 order-lg-2 ms-3" />
 
+          {store.isAuth && (
+            <Nav className="ms-3 d-none d-lg-flex order-lg-3">
+              <img
+                src={User}
+                alt="User"
+                width="32"
+                height="32"
+                className="me-2"
+              />
+              <NavDropdown title={store.user.email} align="end">
+                <NavDropdown.Item as={Link} to={`/user/${store.user.id}`}>
+                  Профиль
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={handleLogout}>
+                  Выйти из аккаунта
+                </NavDropdown.Item>
+              </NavDropdown>
+            </Nav>
+          )}
+
           <div className="search-wrapper d-flex flex-grow-1 order-1 order-lg-1 my-2 my-lg-0">
-            <Form className="d-flex w-100">
+            <Form className="d-flex w-100" onSubmit={handleSearchSubmit}>
               <FormControl
                 type="search"
                 placeholder="Поиск устройств..."
@@ -34,6 +80,7 @@ const Navigation = ({ routes }) => {
                 aria-label="Search"
                 value={searchValue}
                 onChange={(e) => updateSearchValue(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
                 maxLength={100}
               />
               <Button variant="outline-light" type="submit">Поиск</Button>
@@ -43,7 +90,18 @@ const Navigation = ({ routes }) => {
           <Navbar.Collapse id="navbarNav" className="order-3 w-100">
             <Nav className="me-auto mt-2 mb-lg-0">
               <NavLink to="/" className="nav-link ps-0">Главная</NavLink>
-              <EntitiesDropdown />
+              {store.isAdmin && (
+                <>
+                  <EntitiesDropdown />
+                  <ReportsDropdown />
+                </>
+              )}
+              {store.isAuth && (
+                <div className="d-lg-none">
+                  <NavLink to={`/user/${store.user.id}`} className="nav-link">Профиль</NavLink>
+                  <Nav.Link onClick={handleLogout}>Выйти из аккаунта</Nav.Link>
+                </div>
+              )}
             </Nav>
           </Navbar.Collapse>
 
@@ -51,6 +109,6 @@ const Navigation = ({ routes }) => {
       </Navbar>
     </header >
   );
-};
+});
 
 export default Navigation;

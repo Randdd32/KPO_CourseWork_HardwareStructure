@@ -10,15 +10,6 @@ const StructureElementTypesTableRow = ({
       <td className="text-center">{structureElementType.id}</td>
       <td>{structureElementType.name}</td>
       <td>
-        <Button
-          variant="dark"
-          className="w-100 fw-semibold"
-          onClick={onEditInPage}
-        >
-          Редактировать
-        </Button>
-      </td>
-      <td>
         <ButtonGroup aria-label="Действия">
           <Button
             variant="success"
