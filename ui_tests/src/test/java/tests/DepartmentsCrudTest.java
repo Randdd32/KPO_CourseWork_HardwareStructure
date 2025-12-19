@@ -14,7 +14,7 @@ public class DepartmentsCrudTest extends AbstractCrudTest {
     public void testDepartmentsFullCycle() {
         DepartmentsPage page = new DepartmentsPage(driver);
 
-        String deptName = "Тестовый Отдел " + System.currentTimeMillis();
+        String deptName = "Тестовый отдел " + System.currentTimeMillis();
         String updatedName = deptName + " (Обновлен)";
 
         List<String> initialPositions = Arrays.asList("Менеджер по продажам", "Бухгалтер");
